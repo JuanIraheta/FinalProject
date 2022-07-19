@@ -9,11 +9,23 @@ import javax.sql.DataSource;
 @Configuration
 public class PersistenceConfig {
 
+//    @Bean
+//    public DataSource dataSource()
+//    {
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setUrl("jdbc:mysql://localhost:3307/final-project-database");
+//        dataSource.setUsername("juaniraheta");
+//        dataSource.setPassword("password");
+//
+//        return dataSource;
+//    }
+
     @Bean
     public DataSource dataSource()
     {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:mysql://localhost:3307/final-project-database");
+        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setUrl("jdbc:h2:mem:final-project");
         dataSource.setUsername("juaniraheta");
         dataSource.setPassword("password");
 
