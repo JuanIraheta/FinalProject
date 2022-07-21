@@ -27,4 +27,7 @@ public class Checkout {
     @JoinColumn(name = "checkout_id",referencedColumnName = "id")
     private List<CheckoutProduct>checkoutProducts;
 
+    @OneToOne
+    private Address address;
+
 }
