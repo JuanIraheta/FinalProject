@@ -1,18 +1,20 @@
 package com.example.finalproject.persistence.model;
 
+
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Entity
-@Table(name = "Checkout")
+@Table(name = "Order")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Checkout {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +25,17 @@ public class Checkout {
     private User user;
 
     @Column
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "checkout_id",referencedColumnName = "id")
-    private List<CheckoutProduct>checkoutProducts;
-
     @OneToOne
     private Address address;
+
+    @OneToMany
+    private List<OrderProduct> orderProducts;
+
+    @PositiveOrZero(message = "Total must be a positive Value")
+    private double total;
+
+    @OneToOne
+    private Transaction transaction;
+
 
 }
