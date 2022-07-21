@@ -19,7 +19,7 @@ public class Checkout {
     @Column
     private long id;
 
-    @ManyToOne
+    @OneToOne
     private User user;
 
     @Column

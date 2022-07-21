@@ -18,8 +18,6 @@ public class PaymentMethod {
     @Column
     private long id;
 
-    private String name;
-
     private double founds;
 
     private String paymentType;

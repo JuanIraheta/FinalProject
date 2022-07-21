@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PaymentMethod")
+@Table(name = "Transaction")
 @Getter
 @Setter
 @AllArgsConstructor
