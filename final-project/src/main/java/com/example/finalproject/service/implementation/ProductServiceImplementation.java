@@ -20,4 +20,9 @@ public class ProductServiceImplementation implements ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+    @Override
+    public Product getProduct(String name) {
+        return productRepository.findByName(name);
+    }
 }
