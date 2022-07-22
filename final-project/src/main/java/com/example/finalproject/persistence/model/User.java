@@ -7,7 +7,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "Users")
@@ -23,6 +22,7 @@ public class User {
     @Column
     private long id;
 
+    @Column
     @NotBlank(message = "Email is Mandatory")
     @Email(message = "Email must be valid")
     private String email;

@@ -29,7 +29,6 @@ public class Order {
     private Address address;
 
     @OneToMany
-    @JoinColumn(name = "order_id",referencedColumnName = "id")
     private List<OrderProduct> orderProducts;
 
     @PositiveOrZero(message = "Total must be a positive Value")
