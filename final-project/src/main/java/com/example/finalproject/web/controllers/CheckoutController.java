@@ -29,9 +29,9 @@ public class CheckoutController {
     }
 
     @PostMapping(value = "/API/users/checkout")
-    public ResponseEntity<String> createCheckout ()
+    public ResponseEntity<String> createCheckout (@RequestBody @Valid CreateCheckoutDTO checkoutDTO)
     {
-        checkoutServiceImplementation.createCheckOut();
+        checkoutServiceImplementation.createCheckOut(checkoutDTO);
         return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
     }
     @PostMapping(value = "/API/users/checkout/product")

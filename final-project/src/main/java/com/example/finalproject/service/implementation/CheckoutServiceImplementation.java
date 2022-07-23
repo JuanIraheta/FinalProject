@@ -32,11 +32,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return checkoutRepository.findAll();
     }
 
-    public void createCheckOut()
+    public void createCheckOut(CreateCheckoutDTO checkoutDTO)
     {
         //Crear el checkout basico
-        User getUser = userRepository.findById(1l).get();
-        Product getProduct = productRepository.findById(1l).get();
+        User getUser = userRepository.findById(checkoutDTO.getUserID()).get();
+        Product getProduct = productRepository.findByName(checkoutDTO.getProduct());
         Checkout checkout = Checkout.builder()
                 .user(getUser)
                 .address(getUser.getAddress().get(0))
@@ -48,7 +48,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         //Crear su respectivo checkout product
         CheckoutProduct checkoutProduct = new CheckoutProduct();
         checkoutProduct.setProduct(getProduct);
-        checkoutProduct.setQuantity(1);
+        checkoutProduct.setQuantity(checkoutDTO.getQuantity());
         checkoutProduct.setCheckout(savedCheckout);
 
         checkoutProductRepository.save(checkoutProduct);
