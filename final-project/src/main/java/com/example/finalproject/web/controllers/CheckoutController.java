@@ -37,7 +37,7 @@ public class CheckoutController {
     @PostMapping(value = "/API/users/checkout/product")
     public ResponseEntity<String> createCheckoutProduct ()
     {
-        checkoutServiceImplementation.CreateCheckoutProduct();
+        checkoutServiceImplementation.createCheckoutProduct();
         return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
     }
 

@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +35,18 @@ public class CheckoutServiceImplementation implements CheckoutService {
     public void createCheckOut(CreateCheckoutDTO checkoutDTO)
     {
         //Crear el checkout basico
-        User getUser = userRepository.findById(checkoutDTO.getUserID()).get();
+        Optional<User> getUser = userRepository.findById(checkoutDTO.getUserID());
+        if (!getUser.isPresent())
+        {
+            //Throw Exception
+        }
 
         //Creating checkout
         Checkout checkout = Checkout.builder()
-                .user(getUser)
-                .address(getUser.getAddress().get(0))
-                .paymentMethod(getUser.getPaymentMethods().get(0))
+                .user(getUser.get())
+                .address(getUser.get().getAddress().size() > 0 ? getUser.get().getAddress().get(0):null)
+                .paymentMethod(getUser.get().getPaymentMethods().size() > 0 ?
+                        getUser.get().getPaymentMethods().get(0) : null)
                 .build();
 
         Checkout savedCheckout = checkoutRepository.save(checkout);
@@ -50,11 +55,22 @@ public class CheckoutServiceImplementation implements CheckoutService {
         //Crear los respectivos checkout products basandose en la lista de products.
         for (int i= 0; i < checkoutDTO.getProducts().size();i++)
         {
-            CheckoutProduct checkoutProduct = new CheckoutProduct();
+
             Product getProduct = productRepository.findByName(checkoutDTO.getProducts().get(i).getProductName());
-            checkoutProduct.setProduct(getProduct);
-            checkoutProduct.setQuantity(checkoutDTO.getProducts().get(i).getQuantity());
-            checkoutProduct.setCheckout(savedCheckout);
+            if (getProduct == null)
+            {
+                //Throw Exception
+            }
+            CheckoutProduct checkoutProduct = CheckoutProduct.builder()
+                    .product(getProduct)
+                    .quantity(checkoutDTO.getProducts().get(i).getQuantity() < getProduct.getStock()
+                            ? checkoutDTO.getProducts().get(i).getQuantity() : 0)
+//                    .quantity(checkoutDTO.getProducts().get(i).getQuantity())
+                    .checkout(savedCheckout)
+                    .build();
+//            checkoutProduct.setProduct(getProduct);
+//            checkoutProduct.setQuantity(checkoutDTO.getProducts().get(i).getQuantity());
+//            checkoutProduct.setCheckout(savedCheckout);
 
             checkoutProductRepository.save(checkoutProduct);
         }
@@ -62,7 +78,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
     }
 
-    public void CreateCheckoutProduct()
+    public void createCheckoutProduct()
     {
         CheckoutProduct checkoutProduct = new CheckoutProduct();
         Product getProduct = productRepository.findById(1l).get();
