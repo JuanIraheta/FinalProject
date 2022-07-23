@@ -16,8 +16,9 @@ public class CreateCheckoutDTO {
 
     private long userID;
 
-    private String product;
-
-    private int quantity;
+    private List<CheckoutProductDTO> products;
+//    private String product;
+//
+//    private int quantity;
 
 }

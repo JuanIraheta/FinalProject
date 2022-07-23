@@ -11,5 +11,5 @@ public class CheckoutProductDTO {
 
     private String productName;
 
-    private int productQuantity;
+    private int quantity;
 }

@@ -36,7 +36,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
     {
         //Crear el checkout basico
         User getUser = userRepository.findById(checkoutDTO.getUserID()).get();
-        Product getProduct = productRepository.findByName(checkoutDTO.getProduct());
+
+        //Creating checkout
         Checkout checkout = Checkout.builder()
                 .user(getUser)
                 .address(getUser.getAddress().get(0))
@@ -45,13 +46,19 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
         Checkout savedCheckout = checkoutRepository.save(checkout);
 
-        //Crear su respectivo checkout product
-        CheckoutProduct checkoutProduct = new CheckoutProduct();
-        checkoutProduct.setProduct(getProduct);
-        checkoutProduct.setQuantity(checkoutDTO.getQuantity());
-        checkoutProduct.setCheckout(savedCheckout);
 
-        checkoutProductRepository.save(checkoutProduct);
+        //Crear los respectivos checkout products basandose en la lista de products.
+        for (int i= 0; i < checkoutDTO.getProducts().size();i++)
+        {
+            CheckoutProduct checkoutProduct = new CheckoutProduct();
+            Product getProduct = productRepository.findByName(checkoutDTO.getProducts().get(i).getProductName());
+            checkoutProduct.setProduct(getProduct);
+            checkoutProduct.setQuantity(checkoutDTO.getProducts().get(i).getQuantity());
+            checkoutProduct.setCheckout(savedCheckout);
+
+            checkoutProductRepository.save(checkoutProduct);
+        }
+
 
     }
 
