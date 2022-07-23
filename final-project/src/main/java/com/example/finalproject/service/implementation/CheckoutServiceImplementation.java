@@ -1,5 +1,7 @@
 package com.example.finalproject.service.implementation;
 
+import com.example.finalproject.exception.NotEnoughStockException;
+import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.persistence.model.CheckoutProduct;
 import com.example.finalproject.persistence.model.Product;
@@ -38,7 +40,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         Optional<User> getUser = userRepository.findById(checkoutDTO.getUserID());
         if (!getUser.isPresent())
         {
-            //Throw Exception
+            throw new ResourceNotFoundException("We could not find a user with the given id");
         }
 
         //Creating checkout
@@ -59,15 +61,18 @@ public class CheckoutServiceImplementation implements CheckoutService {
             Product getProduct = productRepository.findByName(checkoutDTO.getProducts().get(i).getProductName());
             if (getProduct == null)
             {
-                //Throw Exception
+                throw new ResourceNotFoundException("We could not find a product with the given name");
             }
             CheckoutProduct checkoutProduct = CheckoutProduct.builder()
                     .product(getProduct)
-                    .quantity(checkoutDTO.getProducts().get(i).getQuantity() < getProduct.getStock()
-                            ? checkoutDTO.getProducts().get(i).getQuantity() : 0)
+                    .quantity(checkoutDTO.getProducts().get(i).getQuantity())
 //                    .quantity(checkoutDTO.getProducts().get(i).getQuantity())
                     .checkout(savedCheckout)
                     .build();
+            if (checkoutProduct.getQuantity() > getProduct.getStock())
+            {
+                throw new NotEnoughStockException("Not enough items on stock");
+            }
 //            checkoutProduct.setProduct(getProduct);
 //            checkoutProduct.setQuantity(checkoutDTO.getProducts().get(i).getQuantity());
 //            checkoutProduct.setCheckout(savedCheckout);
