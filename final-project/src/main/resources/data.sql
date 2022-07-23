@@ -12,3 +12,7 @@ insert into Payment_Method values (1,50.00,'Debit Card',1);
 insert into Payment_Method values (2,100.00,'Credit Card',1);
 
 insert into Payment_Method values (3,5.00,'Debit Card',2);
+
+-- insert into Checkout values (1,1,1);
+-- insert into Checkout_Product values (1,5,1,1);
+

@@ -1,5 +1,6 @@
 package com.example.finalproject.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,4 +29,8 @@ public class CheckoutProduct {
     @PositiveOrZero
     private int quantity;
 
+    @ManyToOne
+    @JoinColumn(name = "checkout_id")
+    @JsonIgnore
+    private Checkout checkout;
 }

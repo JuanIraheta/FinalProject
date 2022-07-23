@@ -15,19 +15,23 @@ import java.util.List;
 public class Checkout {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private long id;
 
     @OneToOne
+    @JoinColumn(name = "userID")
     private User user;
 
     @Column
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "checkout_id",referencedColumnName = "id")
+    @OneToMany(mappedBy = "checkout")
     private List<CheckoutProduct>checkoutProducts;
 
     @OneToOne
     private Address address;
+
+    @OneToOne
+    private PaymentMethod paymentMethod;
+
 
 }
