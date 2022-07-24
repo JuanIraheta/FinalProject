@@ -5,6 +5,8 @@ import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
+import com.example.finalproject.service.mapper.CheckoutMapper;
+import com.example.finalproject.web.DTO.CheckoutDTO;
 import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import com.example.finalproject.web.DTO.CreateCheckoutDTO;
 import com.example.finalproject.web.DTO.UpdateCheckoutProductDTO;
@@ -28,9 +30,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
     private final PaymentMethodRepository paymentMethodRepository;
 
-    @Override
-    public List<Checkout> getAllCheckouts() {
-        return checkoutRepository.findAll();
+
+    public CheckoutDTO getCheckout() {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+
+        return CheckoutMapper.INSTANCE.CheckoutToCheckoutDTO(checkout);
     }
 
     public void createCheckOut(CreateCheckoutDTO checkoutDTO)

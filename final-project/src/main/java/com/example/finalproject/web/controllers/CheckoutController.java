@@ -2,6 +2,7 @@ package com.example.finalproject.web.controllers;
 
 import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
+import com.example.finalproject.web.DTO.CheckoutDTO;
 import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import com.example.finalproject.web.DTO.CreateCheckoutDTO;
 import com.example.finalproject.web.DTO.UpdateCheckoutProductDTO;
@@ -21,9 +22,9 @@ public class CheckoutController {
 
 
     @GetMapping(value = "/API/users/checkouts")
-    public List<Checkout> getCheckouts()
+    public CheckoutDTO getCheckout()
     {
-        return checkoutServiceImplementation.getAllCheckouts();
+        return checkoutServiceImplementation.getCheckout();
     }
 
     @PostMapping(value = "/API/users/checkouts")
