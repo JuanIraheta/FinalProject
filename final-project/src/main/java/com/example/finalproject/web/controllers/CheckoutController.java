@@ -1,16 +1,14 @@
 package com.example.finalproject.web.controllers;
 
 import com.example.finalproject.persistence.model.Checkout;
-import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
+import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import com.example.finalproject.web.DTO.CreateCheckoutDTO;
+import com.example.finalproject.web.DTO.UpdateCheckoutProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,23 +26,24 @@ public class CheckoutController {
         return checkoutServiceImplementation.getAllCheckouts();
     }
 
-    @PostMapping(value = "/API/users/checkout")
+    @PostMapping(value = "/API/users/checkouts")
     public ResponseEntity<String> createCheckout (@RequestBody @Valid CreateCheckoutDTO checkoutDTO)
     {
         checkoutServiceImplementation.createCheckOut(checkoutDTO);
         return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
     }
-    @PostMapping(value = "/API/users/checkout/product")
-    public ResponseEntity<String> createCheckoutProduct ()
+
+    @PostMapping(value = "/API/user/checkouts/products")
+    public ResponseEntity<String> addProductToCheckout (@RequestBody @Valid CheckoutProductDTO checkoutProductDTO)
     {
-        checkoutServiceImplementation.createCheckoutProduct();
-        return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
+        checkoutServiceImplementation.addProductToCheckout(checkoutProductDTO);
+        return new ResponseEntity<>("Product added successfully", HttpStatus.OK);
     }
 
-//    @PostMapping(value = "/API/users/checkout")
-//    public ResponseEntity<String> createCheckout (@RequestBody @Valid CreateCheckoutDTO checkoutDTO)
-//    {
-//        checkoutServiceImplementation.createCheckOut(checkoutDTO);
-//        return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
-//    }
+    @PutMapping(value = "/API/user/checkout/products/{id}")
+    public ResponseEntity<String> modifyCheckoutProductQuantity (@PathVariable String id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
+    {
+        checkoutServiceImplementation.modifyProductQuantity(id,checkoutProductDTO);
+        return new ResponseEntity<>("Product modified successfully", HttpStatus.OK);
+    }
 }

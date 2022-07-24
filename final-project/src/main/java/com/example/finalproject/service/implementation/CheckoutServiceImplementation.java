@@ -11,7 +11,9 @@ import com.example.finalproject.persistence.repository.CheckoutRepository;
 import com.example.finalproject.persistence.repository.ProductRepository;
 import com.example.finalproject.persistence.repository.UserRepository;
 import com.example.finalproject.service.CheckoutService;
+import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import com.example.finalproject.web.DTO.CreateCheckoutDTO;
+import com.example.finalproject.web.DTO.UpdateCheckoutProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,60 +38,120 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
     public void createCheckOut(CreateCheckoutDTO checkoutDTO)
     {
-        //Crear el checkout basico
-        Optional<User> getUser = userRepository.findById(checkoutDTO.getUserID());
-        if (!getUser.isPresent())
-        {
-            throw new ResourceNotFoundException("We could not find a user with the given id");
-        }
+        //Validates the user
+        User user = getUser(checkoutDTO.getUserID());
 
-        //Creating checkout
+        //Creates the Checkout with user information
         Checkout checkout = Checkout.builder()
-                .user(getUser.get())
-                .address(getUser.get().getAddress().size() > 0 ? getUser.get().getAddress().get(0):null)
-                .paymentMethod(getUser.get().getPaymentMethods().size() > 0 ?
-                        getUser.get().getPaymentMethods().get(0) : null)
+                .user(user)
+                .address(user.getAddress().isEmpty() ? null : user.getAddress().get(0))
+                .paymentMethod(user.getPaymentMethods().isEmpty() ? null : user.getPaymentMethods().get(0))
                 .build();
-
         Checkout savedCheckout = checkoutRepository.save(checkout);
 
-
-        //Crear los respectivos checkout products basandose en la lista de products.
+        //Creates the specific checkout products with dto list information
         for (int i= 0; i < checkoutDTO.getProducts().size();i++)
         {
-
-            Product getProduct = productRepository.findByName(checkoutDTO.getProducts().get(i).getProductName());
-            if (getProduct == null)
-            {
-                throw new ResourceNotFoundException("We could not find a product with the given name");
-            }
-            CheckoutProduct checkoutProduct = CheckoutProduct.builder()
-                    .product(getProduct)
-                    .quantity(checkoutDTO.getProducts().get(i).getQuantity())
-//                    .quantity(checkoutDTO.getProducts().get(i).getQuantity())
-                    .checkout(savedCheckout)
-                    .build();
-            if (checkoutProduct.getQuantity() > getProduct.getStock())
-            {
-                throw new NotEnoughStockException("Not enough items on stock");
-            }
-//            checkoutProduct.setProduct(getProduct);
-//            checkoutProduct.setQuantity(checkoutDTO.getProducts().get(i).getQuantity());
-//            checkoutProduct.setCheckout(savedCheckout);
-
-            checkoutProductRepository.save(checkoutProduct);
+            Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getProductName());
+            createCheckoutProduct(getProduct,checkoutDTO.getProducts().get(i).getQuantity(),savedCheckout);
         }
-
-
     }
 
-    public void createCheckoutProduct()
+    public void addProductToCheckout(CheckoutProductDTO checkoutProductDTO)
     {
-        CheckoutProduct checkoutProduct = new CheckoutProduct();
-        Product getProduct = productRepository.findById(1l).get();
-        checkoutProduct.setProduct(getProduct);
-        checkoutProduct.setQuantity(1);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(1l);
+        Checkout checkout = getCheckout(user);
+        Product getProduct = getProduct(checkoutProductDTO.getProductName());
+
+        //Trying to find a checkout product
+        CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
+        //If it doesnt exist we create a new one
+        if (checkoutProduct == null)
+        {
+            createCheckoutProduct(getProduct,checkoutProductDTO.getQuantity(),checkout);
+            return;
+        }
+        //if it exist we validate and set the quantity
+        setCheckoutProductQuantity(checkoutProduct,checkoutProduct.getQuantity() +
+                checkoutProductDTO.getQuantity(),getProduct.getStock());
+    }
+
+    public void modifyProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
+    {
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(1l);
+        Checkout checkout = getCheckout(user);
+        Product getProduct = getProduct(productName);
+
+        //Trying to find a checkout product
+        CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
+        if (checkoutProduct ==  null)
+        {
+            throw new ResourceNotFoundException("We could not find a product checkout with the given information");
+        }
+
+        setCheckoutProductQuantity(checkoutProduct, updateCheckoutProductDTO.getQuantity(),getProduct.getStock());
+    }
+
+
+    //Method used to create a checkout product
+    private void createCheckoutProduct(Product product,int quantity, Checkout checkout)
+    {
+        CheckoutProduct checkoutProduct = CheckoutProduct.builder()
+                .product(product)
+                .quantity(quantity)
+                .checkout(checkout)
+                .build();
+        if (checkoutProduct.getQuantity() > product.getStock())
+        {
+            throw new NotEnoughStockException("Not enough items on stock");
+        }
 
         checkoutProductRepository.save(checkoutProduct);
     }
+
+    //Sets the products quantity on the checkout product
+    private void setCheckoutProductQuantity(CheckoutProduct checkoutProduct, int quantity, int stock)
+    {
+        if (quantity > stock)
+        {
+            throw new NotEnoughStockException("Not enough items on stock");
+        }
+        checkoutProduct.setQuantity(quantity);
+        checkoutProductRepository.save(checkoutProduct);
+    }
+
+
+    ////Validates the Objects we recieve
+    private User getUser (long id)
+    {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent())
+        {
+            throw new ResourceNotFoundException("We could not find a user with the given id");
+        }
+        return user.get();
+    }
+
+    private Product getProduct (String name)
+    {
+        Product getProduct = productRepository.findByName(name);
+        if (getProduct == null)
+        {
+            throw new ResourceNotFoundException("We could not find a product with the given name");
+        }
+        return getProduct;
+    }
+
+    private Checkout getCheckout (User user)
+    {
+        Checkout checkout = checkoutRepository.findByUser(user);
+        if (checkout == null)
+        {
+            throw new ResourceNotFoundException("We could not find a checkout with the given user, please create one");
+        }
+        return checkout;
+    }
+
 }

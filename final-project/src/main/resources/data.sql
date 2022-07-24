@@ -1,5 +1,7 @@
 insert into Product values (1,'Water',5.00,5);
 insert into Product values (2,'Soda',2.00,20);
+insert into Product values (3,'Chocolate',3.00,25);
+insert into Product values (4,'Wings',8.00,12);
 
 insert into Users values (1,'irahetajuanjose@hotmail.com','Juan','Iraheta','+503 7129 9991','Loading');
 insert into Users values (2,'irahetajuanjose@gmail.com','Jose','Martinez','+503 2288 3394','Sephirtod');
