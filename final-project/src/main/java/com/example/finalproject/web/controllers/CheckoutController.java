@@ -40,17 +40,31 @@ public class CheckoutController {
         return new ResponseEntity<>("Product added successfully", HttpStatus.OK);
     }
 
-    @PutMapping(value = "/API/user/checkout/products/{id}")
+    @PutMapping(value = "/API/user/checkouts/products/{id}")
     public ResponseEntity<String> modifyCheckoutProductQuantity (@PathVariable String id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.modifyProductQuantity(id,checkoutProductDTO);
         return new ResponseEntity<>("Product modified successfully", HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/API/user/checkout/products/{id}")
+    @DeleteMapping(value = "/API/user/checkouts/products/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable String id)
     {
         checkoutServiceImplementation.deleteCheckoutProduct(id);
         return new ResponseEntity<>("Product Deleted Successfully",HttpStatus.OK);
+    }
+
+    @PutMapping(value = "API/users/checkouts/addresses")
+    public ResponseEntity<String> changeCheckoutAddress (@RequestParam long addressID)
+    {
+        checkoutServiceImplementation.changeCheckoutAddress(addressID);
+        return new ResponseEntity<>("Address Changed Successfully", HttpStatus.OK);
+    }
+
+    @PutMapping(value = "API/users/checkouts/payments")
+    public ResponseEntity<String> changeCheckoutPaymentMethod (@RequestParam long paymentID)
+    {
+        checkoutServiceImplementation.changeCheckoutPaymentMethod(paymentID);
+        return new ResponseEntity<>("Payment Method Changed Successfully", HttpStatus.OK);
     }
 }

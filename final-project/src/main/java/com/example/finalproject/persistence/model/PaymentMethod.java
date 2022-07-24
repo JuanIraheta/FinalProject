@@ -1,5 +1,6 @@
 package com.example.finalproject.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,4 +22,9 @@ public class PaymentMethod {
     private double founds;
 
     private String paymentType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 }

@@ -2,14 +2,8 @@ package com.example.finalproject.service.implementation;
 
 import com.example.finalproject.exception.NotEnoughStockException;
 import com.example.finalproject.exception.ResourceNotFoundException;
-import com.example.finalproject.persistence.model.Checkout;
-import com.example.finalproject.persistence.model.CheckoutProduct;
-import com.example.finalproject.persistence.model.Product;
-import com.example.finalproject.persistence.model.User;
-import com.example.finalproject.persistence.repository.CheckoutProductRepository;
-import com.example.finalproject.persistence.repository.CheckoutRepository;
-import com.example.finalproject.persistence.repository.ProductRepository;
-import com.example.finalproject.persistence.repository.UserRepository;
+import com.example.finalproject.persistence.model.*;
+import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
 import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import com.example.finalproject.web.DTO.CreateCheckoutDTO;
@@ -30,6 +24,9 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final CheckoutProductRepository checkoutProductRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final AddressRepository addressRepository;
+
+    private final PaymentMethodRepository paymentMethodRepository;
 
     @Override
     public List<Checkout> getAllCheckouts() {
@@ -131,6 +128,38 @@ public class CheckoutServiceImplementation implements CheckoutService {
             checkoutRepository.delete(checkout);
         }
 
+    }
+
+    public void changeCheckoutAddress (long id)
+    {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+
+        Address address = addressRepository.findByUserAndId(user,id);
+
+        if (address == null)
+        {
+            throw new ResourceNotFoundException("We could not find an address with this id in this user");
+        }
+
+        checkout.setAddress(address);
+        checkoutRepository.save(checkout);
+    }
+
+    public void changeCheckoutPaymentMethod (long id)
+    {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+
+        PaymentMethod paymentMethod = paymentMethodRepository.findByUserAndId(user,id);
+
+        if (paymentMethod == null)
+        {
+            throw new ResourceNotFoundException("We could not find a payment method with this id in this user");
+        }
+
+        checkout.setPaymentMethod(paymentMethod);
+        checkoutRepository.save(checkout);
     }
 
 
