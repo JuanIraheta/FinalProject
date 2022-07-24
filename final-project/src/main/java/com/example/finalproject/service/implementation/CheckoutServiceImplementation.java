@@ -60,7 +60,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
     public void addProductToCheckout(CheckoutProductDTO checkoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1l);
+        User user = getUser(1L);
         Checkout checkout = getCheckout(user);
         Product getProduct = getProduct(checkoutProductDTO.getProductName());
 
@@ -80,7 +80,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
     public void modifyProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1l);
+        User user = getUser(1L);
         Checkout checkout = getCheckout(user);
         Product getProduct = getProduct(productName);
 
@@ -111,6 +111,30 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.save(checkoutProduct);
     }
 
+    public void deleteCheckoutProduct(String productName)
+    {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+        Product getProduct = getProduct(productName);
+
+        //Trying to find a checkout product
+        CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
+        if (checkoutProduct ==  null)
+        {
+            throw new ResourceNotFoundException("We could not find a product checkout with the given information");
+        }
+
+        checkoutProductRepository.delete(checkoutProduct);
+
+        if (checkout.getCheckoutProducts().size() <= 1)
+        {
+            checkoutRepository.delete(checkout);
+        }
+
+    }
+
+
+    //Secondary Methods
     //Sets the products quantity on the checkout product
     private void setCheckoutProductQuantity(CheckoutProduct checkoutProduct, int quantity, int stock)
     {

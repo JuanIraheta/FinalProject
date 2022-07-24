@@ -46,4 +46,11 @@ public class CheckoutController {
         checkoutServiceImplementation.modifyProductQuantity(id,checkoutProductDTO);
         return new ResponseEntity<>("Product modified successfully", HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/API/user/checkout/products/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id)
+    {
+        checkoutServiceImplementation.deleteCheckoutProduct(id);
+        return new ResponseEntity<>("Product Deleted Successfully",HttpStatus.OK);
+    }
 }
