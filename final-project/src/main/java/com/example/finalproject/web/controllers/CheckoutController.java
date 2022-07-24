@@ -1,6 +1,5 @@
 package com.example.finalproject.web.controllers;
 
-import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
 import com.example.finalproject.web.DTO.CheckoutDTO;
 import com.example.finalproject.web.DTO.CheckoutProductDTO;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,26 +32,34 @@ public class CheckoutController {
         return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
     }
 
-    @PostMapping(value = "/API/user/checkouts/products")
+    @PostMapping(value = "/API/users/checkouts/products")
     public ResponseEntity<String> addProductToCheckout (@RequestBody @Valid CheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.addProductToCheckout(checkoutProductDTO);
         return new ResponseEntity<>("Product added successfully", HttpStatus.OK);
     }
 
-    @PutMapping(value = "/API/user/checkouts/products/{id}")
+    @PutMapping(value = "/API/users/checkouts/products/{id}")
     public ResponseEntity<String> modifyCheckoutProductQuantity (@PathVariable String id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.modifyProductQuantity(id,checkoutProductDTO);
         return new ResponseEntity<>("Product modified successfully", HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/API/user/checkouts/products/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id)
+    @DeleteMapping(value = "/API/users/checkouts/products/{id}")
+    public ResponseEntity<String> deleteCheckoutProduct(@PathVariable String id)
     {
         checkoutServiceImplementation.deleteCheckoutProduct(id);
         return new ResponseEntity<>("Product Deleted Successfully",HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/API/users/checkouts")
+    public ResponseEntity<String> deleteCheckout()
+    {
+        checkoutServiceImplementation.deleteCheckout();
+        return new ResponseEntity<>("Checkout Deleted Successfully",HttpStatus.OK);
+    }
+
 
     @PutMapping(value = "API/users/checkouts/addresses")
     public ResponseEntity<String> changeCheckoutAddress (@RequestParam long addressID)

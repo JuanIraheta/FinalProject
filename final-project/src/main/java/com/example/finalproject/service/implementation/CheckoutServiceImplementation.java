@@ -1,6 +1,7 @@
 package com.example.finalproject.service.implementation;
 
 import com.example.finalproject.exception.NotEnoughStockException;
+import com.example.finalproject.exception.ResourceAlreadyExistException;
 import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,7 +42,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
     {
         //Validates the user
         User user = getUser(checkoutDTO.getUserID());
-
+        Checkout getCheckout = checkoutRepository.findByUser(user);
+        if (getCheckout != null)
+        {
+            throw new ResourceAlreadyExistException("This user already has a checkout");
+        }
         //Creates the Checkout with user information
         Checkout checkout = Checkout.builder()
                 .user(user)
@@ -133,6 +137,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
             checkoutRepository.delete(checkout);
         }
 
+    }
+
+    public void deleteCheckout()
+    {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+        checkoutProductRepository.deleteAllByCheckout(checkout);
+        checkoutRepository.delete(checkout);
     }
 
     public void changeCheckoutAddress (long id)
