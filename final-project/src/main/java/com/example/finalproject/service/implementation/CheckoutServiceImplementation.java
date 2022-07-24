@@ -83,39 +83,22 @@ public class CheckoutServiceImplementation implements CheckoutService {
                 checkoutProductDTO.getQuantity(),getProduct.getStock());
     }
 
+
     public void modifyProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
-        //Get the specific user, its checkout and the product that is needed
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
         Product getProduct = getProduct(productName);
 
-        //Trying to find a checkout product
-        CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
-        if (checkoutProduct ==  null)
-        {
-            throw new ResourceNotFoundException("We could not find a product checkout with the given information");
-        }
+        CheckoutProduct checkoutProduct = getCheckoutProduct(checkout,getProduct);
 
-        setCheckoutProductQuantity(checkoutProduct, updateCheckoutProductDTO.getQuantity(),getProduct.getStock());
+        setCheckoutProductQuantity(checkoutProduct, checkoutProduct.getQuantity() +
+                updateCheckoutProductDTO.getQuantity(), getProduct.getStock());
+
+        deleteCheckoutProductQuantityZero(checkoutProduct);
+        deleteCheckoutNoProducts(checkout);
     }
 
-
-    //Method used to create a checkout product
-    private void createCheckoutProduct(Product product,int quantity, Checkout checkout)
-    {
-        CheckoutProduct checkoutProduct = CheckoutProduct.builder()
-                .product(product)
-                .quantity(quantity)
-                .checkout(checkout)
-                .build();
-        if (checkoutProduct.getQuantity() > product.getStock())
-        {
-            throw new NotEnoughStockException("Not enough items on stock");
-        }
-
-        checkoutProductRepository.save(checkoutProduct);
-    }
 
     public void deleteCheckoutProduct(String productName)
     {
@@ -132,10 +115,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
         checkoutProductRepository.delete(checkoutProduct);
 
-        if (checkout.getCheckoutProducts().size() <= 1)
-        {
-            checkoutRepository.delete(checkout);
-        }
+        deleteCheckoutNoProducts(checkout);
 
     }
 
@@ -180,6 +160,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
 
+
+
+
+
+
+
     //Secondary Methods
     //Sets the products quantity on the checkout product
     private void setCheckoutProductQuantity(CheckoutProduct checkoutProduct, int quantity, int stock)
@@ -191,6 +177,40 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProduct.setQuantity(quantity);
         checkoutProductRepository.save(checkoutProduct);
     }
+
+    private void deleteCheckoutProductQuantityZero(CheckoutProduct checkoutProduct)
+    {
+        if (checkoutProduct.getQuantity() <= 0)
+        {
+            checkoutProductRepository.delete(checkoutProduct);
+        }
+    }
+
+    private void deleteCheckoutNoProducts(Checkout checkout)
+    {
+        if (checkout.getCheckoutProducts().size() <= 1)
+        {
+            checkoutRepository.delete(checkout);
+        }
+    }
+
+    //Method used to create a checkout product
+    private void createCheckoutProduct(Product product,int quantity, Checkout checkout)
+    {
+        CheckoutProduct checkoutProduct = CheckoutProduct.builder()
+                .product(product)
+                .quantity(quantity)
+                .checkout(checkout)
+                .build();
+        if (checkoutProduct.getQuantity() > product.getStock())
+        {
+            throw new NotEnoughStockException("Not enough items on stock");
+        }
+
+        checkoutProductRepository.save(checkoutProduct);
+    }
+
+
 
 
     ////Validates the Objects we recieve
@@ -222,6 +242,17 @@ public class CheckoutServiceImplementation implements CheckoutService {
             throw new ResourceNotFoundException("We could not find a checkout with the given user, please create one");
         }
         return checkout;
+    }
+
+    private CheckoutProduct getCheckoutProduct(Checkout checkout, Product product)
+    {
+        CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,product);
+        if (checkoutProduct ==  null)
+        {
+            throw new ResourceNotFoundException("We could not find a product checkout with the given information");
+        }
+
+        return checkoutProduct;
     }
 
 }

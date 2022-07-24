@@ -43,7 +43,7 @@ public class CheckoutController {
     public ResponseEntity<String> modifyCheckoutProductQuantity (@PathVariable String id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.modifyProductQuantity(id,checkoutProductDTO);
-        return new ResponseEntity<>("Product modified successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Product quantity modified successfully", HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/API/users/checkouts/products/{id}")

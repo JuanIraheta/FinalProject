@@ -11,8 +11,6 @@ import lombok.Setter;
 @Builder
 public class UpdateCheckoutProductDTO {
 
-//    private String productName;
-
     private int quantity;
 
 
