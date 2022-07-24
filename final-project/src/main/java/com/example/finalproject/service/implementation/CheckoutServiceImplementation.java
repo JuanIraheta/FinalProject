@@ -135,6 +135,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
     }
 
+    public void deleteCheckout()
+    {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+        checkoutProductRepository.deleteAllByCheckout(checkout);
+        checkoutRepository.delete(checkout);
+    }
+
     public void changeCheckoutAddress (long id)
     {
         User user = getUser(1L);

@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CheckoutProductRepository extends JpaRepository<CheckoutProduct,Long> {
 
     CheckoutProduct findByCheckoutAndProduct(Checkout checkout, Product product);
+
+    void deleteAllByCheckout(Checkout checkout);
 }
