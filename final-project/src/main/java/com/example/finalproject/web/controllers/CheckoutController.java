@@ -1,6 +1,5 @@
 package com.example.finalproject.web.controllers;
 
-import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
 import com.example.finalproject.web.DTO.CheckoutDTO;
 import com.example.finalproject.web.DTO.CheckoutProductDTO;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
