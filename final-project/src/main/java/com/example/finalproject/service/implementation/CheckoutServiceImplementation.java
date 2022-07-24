@@ -1,6 +1,7 @@
 package com.example.finalproject.service.implementation;
 
 import com.example.finalproject.exception.NotEnoughStockException;
+import com.example.finalproject.exception.ResourceAlreadyExistException;
 import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
@@ -42,7 +43,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
     {
         //Validates the user
         User user = getUser(checkoutDTO.getUserID());
-
+        Checkout getCheckout = checkoutRepository.findByUser(user);
+        if (getCheckout != null)
+        {
+            throw new ResourceAlreadyExistException("This user already has a checkout");
+        }
         //Creates the Checkout with user information
         Checkout checkout = Checkout.builder()
                 .user(user)

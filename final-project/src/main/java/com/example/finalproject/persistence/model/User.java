@@ -50,4 +50,5 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private List<PaymentMethod> paymentMethods;
+
 }
