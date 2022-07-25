@@ -8,6 +8,7 @@ import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
 import com.example.finalproject.service.mapper.AddressMapper;
 import com.example.finalproject.service.mapper.CheckoutMapper;
+import com.example.finalproject.service.mapper.CheckoutOrderMapper;
 import com.example.finalproject.service.mapper.PaymentMethodMapper;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,20 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
-
     private final PaymentMethodRepository paymentMethodRepository;
+
+    private final OrderRepository orderRepository;
+
+    private final OrderProductRepository orderProductRepository;
 
 
     public CheckoutDTO getCheckout() {
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
 
-        return CheckoutMapper.INSTANCE.CheckoutToCheckoutDTO(checkout);
+        CheckoutDTO checkoutDTO = CheckoutMapper.INSTANCE.checkoutToCheckoutDTO(checkout);
+        checkoutDTO.setSubTotal(calculateCheckoutSubtotal(checkout));
+        return checkoutDTO;
     }
 
     public void createCheckOut(CreateCheckoutDTO checkoutDTO)
@@ -44,6 +50,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         //Validates the user
         User user = getUser(checkoutDTO.getUserID());
         Checkout getCheckout = checkoutRepository.findByUser(user);
+        //The user can have only one checkout
         if (getCheckout != null)
         {
             throw new ResourceAlreadyExistException("This user already has a checkout");
@@ -62,6 +69,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
             Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getProductName());
             createCheckoutProduct(getProduct,checkoutDTO.getProducts().get(i).getQuantity(),savedCheckout);
         }
+
     }
 
     public void addProductToCheckout(CheckoutProductDTO checkoutProductDTO)
@@ -117,7 +125,6 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.delete(checkoutProduct);
 
         deleteCheckoutNoProducts(checkout);
-
     }
 
     public void deleteCheckout()
@@ -172,7 +179,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         List<CheckoutUserAddressDTO> addressDTO = new ArrayList<>();
         for (int i = 0; i < getAddresses.size(); i++)
         {
-            CheckoutUserAddressDTO element = AddressMapper.INSTANCE.AddressToCheckoutUserAddressDTO(getAddresses.get(i));
+            CheckoutUserAddressDTO element = AddressMapper.INSTANCE.addressToCheckoutUserAddressDTO(getAddresses.get(i));
             addressDTO.add(element);
         }
 
@@ -182,7 +189,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
     public void createAddress(CreateAddressDTO createAddressDTO)
     {
         User user = getUser(1L);
-        Address createAddress = AddressMapper.INSTANCE.CreateAddressDTOToAddress(createAddressDTO);
+        Address createAddress = AddressMapper.INSTANCE.createAddressDTOToAddress(createAddressDTO);
         createAddress.setUser(user);
         addressRepository.save(createAddress);
     }
@@ -198,7 +205,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         List<PaymentMethodDTO> paymentMethodDTO = new ArrayList<>();
         for (int i = 0; i < getPaymentMethods.size(); i++)
         {
-            PaymentMethodDTO element = PaymentMethodMapper.INSTANCE.PaymentMethodToPaymentMethodDTO(getPaymentMethods.get(i));
+            PaymentMethodDTO element = PaymentMethodMapper.INSTANCE.paymentMethodToPaymentMethodDTO(getPaymentMethods.get(i));
             paymentMethodDTO.add(element);
         }
 
@@ -208,9 +215,35 @@ public class CheckoutServiceImplementation implements CheckoutService {
     public void createPaymentMethod(CreatePaymentMethodDTO createPaymentMethodDTO)
     {
         User user = getUser(1L);
-        PaymentMethod createPaymentMethod = PaymentMethodMapper.INSTANCE.CreatePaymentMethodDTOToPaymentMethod(createPaymentMethodDTO);
+        PaymentMethod createPaymentMethod = PaymentMethodMapper.INSTANCE.createPaymentMethodDTOToPaymentMethod(createPaymentMethodDTO);
         createPaymentMethod.setUser(user);
         paymentMethodRepository.save(createPaymentMethod);
+    }
+
+    public Orders generateOrder()
+    {
+        User user = getUser(1L);
+        Checkout checkout = getCheckout(user);
+
+        //Mapp the chekout info to the order
+        Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
+        Orders order = orderRepository.save(createOrder);
+        double total = 0;
+
+        // Generate Order Products
+        for (int i= 0; i < checkout.getCheckoutProducts().size();i++)
+        {
+//            Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getProductName());
+//            createCheckoutProduct(getProduct,checkoutDTO.getProducts().get(i).getQuantity(),savedCheckout);
+            OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
+            orderProduct.setOrder(order);
+            total += orderProduct.getProduct().getPrice() * orderProduct.getQuantity();
+
+            orderProductRepository.save(orderProduct);
+        }
+        order.setTotal(total);
+        orderRepository.save(order);
+        return order;
     }
 
 
@@ -260,6 +293,18 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
 
         checkoutProductRepository.save(checkoutProduct);
+    }
+
+    private double calculateCheckoutSubtotal(Checkout checkout)
+    {
+        double subTotal = 0;
+        for (int i = 0; i < checkout.getCheckoutProducts().size(); i++)
+        {
+            CheckoutProduct product = checkout.getCheckoutProducts().get(i);
+            subTotal += product.getProduct().getPrice() * product.getQuantity();
+        }
+
+        return subTotal;
     }
 
 

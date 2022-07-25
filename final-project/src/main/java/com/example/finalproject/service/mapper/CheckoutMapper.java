@@ -17,5 +17,5 @@ public interface CheckoutMapper {
     @Mappings({
             @Mapping(target = "userName", source = "checkout.user.userName")
     })
-    CheckoutDTO CheckoutToCheckoutDTO (Checkout checkout);
+    CheckoutDTO checkoutToCheckoutDTO(Checkout checkout);
 }

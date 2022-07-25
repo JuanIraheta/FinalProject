@@ -1,6 +1,7 @@
 package com.example.finalproject.persistence.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,5 +30,10 @@ public class OrderProduct {
     @NotNull(message = "Stock is Mandatory")
     @PositiveOrZero
     private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    @JsonIgnore
+    private Orders order;
 
 }

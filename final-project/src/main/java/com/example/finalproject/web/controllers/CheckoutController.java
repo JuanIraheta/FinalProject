@@ -1,5 +1,6 @@
 package com.example.finalproject.web.controllers;
 
+import com.example.finalproject.persistence.model.Orders;
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,12 @@ public class CheckoutController {
     {
         checkoutServiceImplementation.createPaymentMethod(createPaymentMethodDTO);
         return new ResponseEntity<>("Payment Method Added Successfully", HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/API/users/checkouts/purchases")
+    public Orders generateOrder ()
+    {
+        return checkoutServiceImplementation.generateOrder();
     }
 
 }
