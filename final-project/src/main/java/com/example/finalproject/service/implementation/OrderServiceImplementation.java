@@ -26,7 +26,8 @@ public class OrderServiceImplementation {
 
     public List<Orders> getAllOrders()
     {
-        return orderRepository.findAll();
+        User user = getUser(1L);
+        return orderRepository.findAllByUser(user);
     }
 
 
