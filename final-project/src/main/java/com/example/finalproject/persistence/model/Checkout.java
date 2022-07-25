@@ -3,6 +3,8 @@ package com.example.finalproject.persistence.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Entity
@@ -32,6 +34,5 @@ public class Checkout {
 
     @OneToOne
     private PaymentMethod paymentMethod;
-
 
 }

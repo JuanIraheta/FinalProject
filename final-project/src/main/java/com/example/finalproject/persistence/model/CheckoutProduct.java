@@ -33,4 +33,5 @@ public class CheckoutProduct {
     @JoinColumn(name = "checkout_id")
     @JsonIgnore
     private Checkout checkout;
+
 }

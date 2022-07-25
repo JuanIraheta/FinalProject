@@ -1,9 +1,11 @@
 package com.example.finalproject.persistence.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -22,19 +24,30 @@ public class Orders {
     private long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToOne
+    @NotNull(message = "Please specify an address")
     private Address address;
 
-    @OneToMany
-    private List<OrderProduct> orderProducts;
+    @OneToOne
+    @NotNull(message = "Please specify a payment method")
+    private PaymentMethod paymentMethod;
 
-    @PositiveOrZero(message = "Total must be a positive Value")
-    private double total;
+    @Column
+    @OneToMany(mappedBy = "order")
+    private List<OrderProduct> orderProducts;
 
     @OneToOne
     private Transaction transaction;
 
+    @Column
+    @PositiveOrZero
+    @NotNull
+    private double total;
+
+    private boolean delivered;
 
 }

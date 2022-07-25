@@ -13,7 +13,7 @@ public interface AddressMapper {
 
     AddressMapper INSTANCE = Mappers.getMapper(AddressMapper.class);
 
-    CheckoutUserAddressDTO AddressToCheckoutUserAddressDTO (Address address);
+    CheckoutUserAddressDTO addressToCheckoutUserAddressDTO(Address address);
 
-    Address CreateAddressDTOToAddress(CreateAddressDTO createAddressDTO);
+    Address createAddressDTOToAddress(CreateAddressDTO createAddressDTO);
 }
