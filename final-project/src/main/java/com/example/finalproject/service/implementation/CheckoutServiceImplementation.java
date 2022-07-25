@@ -178,6 +178,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return addressDTO;
     }
 
+    public void createAddress(CreateAddressDTO createAddressDTO)
+    {
+        User user = getUser(1L);
+        Address createAddress = AddressMapper.INSTANCE.CreateAddressDTOToAddress(createAddressDTO);
+        createAddress.setUser(user);
+        addressRepository.save(createAddress);
+    }
+
 
 
 

@@ -78,4 +78,11 @@ public class CheckoutController {
     {
         return checkoutServiceImplementation.getAllAddresses();
     }
+
+    @PostMapping(value = "/API/users/checkouts/addresses")
+    public ResponseEntity<String> createAddress (@RequestBody @Valid CreateAddressDTO createAddressDTO)
+    {
+        checkoutServiceImplementation.createAddress(createAddressDTO);
+        return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
+    }
 }

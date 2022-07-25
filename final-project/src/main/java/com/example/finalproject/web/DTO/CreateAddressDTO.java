@@ -1,24 +1,16 @@
-package com.example.finalproject.persistence.model;
+package com.example.finalproject.web.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "Address")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class Address {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
-    private long id;
+public class CreateAddressDTO {
 
     @Column
     @NotBlank(message = "House Number is Mandatory")
@@ -36,8 +28,5 @@ public class Address {
     @NotBlank(message = "State is Mandatory")
     private String state;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
 }
+
