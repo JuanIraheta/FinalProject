@@ -6,15 +6,15 @@ import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
+import com.example.finalproject.service.mapper.AddressMapper;
 import com.example.finalproject.service.mapper.CheckoutMapper;
-import com.example.finalproject.web.DTO.CheckoutDTO;
-import com.example.finalproject.web.DTO.CheckoutProductDTO;
-import com.example.finalproject.web.DTO.CreateCheckoutDTO;
-import com.example.finalproject.web.DTO.UpdateCheckoutProductDTO;
+import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -159,6 +159,24 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutRepository.save(checkout);
     }
 
+    public List<CheckoutUserAddressDTO> getAllAddresses()
+    {
+        User user = getUser(1L);
+        List<Address> getAddresses = addressRepository.findAllByUser(user);
+        if (getAddresses.isEmpty())
+        {
+            throw new ResourceNotFoundException("There are no addresses in this user, try to create one");
+        }
+
+        List<CheckoutUserAddressDTO> addressDTO = new ArrayList<>();
+        for (int i = 0; i < getAddresses.size(); i++)
+        {
+            CheckoutUserAddressDTO element = AddressMapper.INSTANCE.AddressToCheckoutUserAddressDTO(getAddresses.get(i));
+            addressDTO.add(element);
+        }
+
+        return addressDTO;
+    }
 
 
 
