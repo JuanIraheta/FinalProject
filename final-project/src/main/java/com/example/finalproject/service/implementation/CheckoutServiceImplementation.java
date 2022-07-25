@@ -13,6 +13,7 @@ import com.example.finalproject.service.mapper.CheckoutOrderMapper;
 import com.example.finalproject.service.mapper.PaymentMethodMapper;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -225,46 +226,23 @@ public class CheckoutServiceImplementation implements CheckoutService {
     {
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
-
-        //Mapp the chekout info to the order
-        Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
-        //Verify if has enough founds
-        if (calculateCheckoutSubtotal(checkout) > createOrder.getPaymentMethod().getFounds())
-        {
-            throw new NotEnoughFoundsException("Not enough founds on your payment method");
-        }
-
         //Generate basic order
-        Orders order = orderRepository.save(createOrder);
-        double total = 0;
+        Orders order = createOrderBasedOnCheckout(checkout);
 
-        // Generate Order Products
-        for (int i= 0; i < checkout.getCheckoutProducts().size();i++)
-        {
-            OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
-            orderProduct.setOrder(order);
-            //Eliminating stocks from product
-            orderProduct.getProduct().setStock(orderProduct.getProduct().getStock() - orderProduct.getQuantity());
-            productRepository.save(orderProduct.getProduct());
-
-            //Getting total
-            total += orderProduct.getProduct().getPrice() * orderProduct.getQuantity();
-
-            orderProductRepository.save(orderProduct);
-        }
-        //Save order with a total calculated by the checkout products
+        //Create all de order products and getting the total price
+        double total = createOrderProductsCalculateTotal(checkout,order);
         order.setTotal(total);
-        //Generate Transaction
-        Transaction transaction = Transaction.builder()
-                .paymentMethod(order.getPaymentMethod())
-                .quantity(total)
-                .build();
-        Transaction savedTransaction = transactionRepository.save(transaction);
-        order.setTransaction(savedTransaction);
+
+        //Generate transaction
+        Transaction transaction = generateTransaction(order);
+        order.setTransaction(transaction);
 
         //Remove founds from payment method
-        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - savedTransaction.getQuantity());
+        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
+
+        //Saving the order with all the elements and deleting the checkout
         orderRepository.save(order);
+        deleteCheckout();
     }
 
 
@@ -328,6 +306,43 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return subTotal;
     }
 
+    private double createOrderProductsCalculateTotal(Checkout checkout, Orders order)
+    {
+        double total = 0;
+        // Generate Order Products
+        for (int i= 0; i < checkout.getCheckoutProducts().size();i++)
+        {
+            OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
+            orderProduct.setOrder(order);
+
+            discountStockFromProducts(orderProduct);
+            //Getting total
+            total += orderProduct.getProduct().getPrice() * orderProduct.getQuantity();
+
+            orderProductRepository.save(orderProduct);
+        }
+
+        return total;
+    }
+
+    private void discountStockFromProducts(OrderProduct orderProduct)
+    {
+        //Eliminating stocks from product
+        orderProduct.getProduct().setStock(orderProduct.getProduct().getStock() - orderProduct.getQuantity());
+        productRepository.save(orderProduct.getProduct());
+    }
+
+    private Transaction generateTransaction (Orders order)
+    {
+        //Generate Transaction
+        Transaction transaction = Transaction.builder()
+                .paymentMethod(order.getPaymentMethod())
+                .quantity(order.getTotal())
+                .build();
+        return transactionRepository.save(transaction);
+    }
+
+
 
 
 
@@ -373,4 +388,16 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return checkoutProduct;
     }
 
+    private Orders createOrderBasedOnCheckout (Checkout checkout)
+    {
+        Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
+
+        if (calculateCheckoutSubtotal(checkout) > createOrder.getPaymentMethod().getFounds())
+        {
+            throw new NotEnoughFoundsException("Not enough founds on your payment method");
+        }
+
+        //Generate basic order
+        return orderRepository.save(createOrder);
+    }
 }
