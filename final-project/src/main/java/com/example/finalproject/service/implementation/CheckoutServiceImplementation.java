@@ -233,8 +233,6 @@ public class CheckoutServiceImplementation implements CheckoutService {
         // Generate Order Products
         for (int i= 0; i < checkout.getCheckoutProducts().size();i++)
         {
-//            Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getProductName());
-//            createCheckoutProduct(getProduct,checkoutDTO.getProducts().get(i).getQuantity(),savedCheckout);
             OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
             orderProduct.setOrder(order);
             total += orderProduct.getProduct().getPrice() * orderProduct.getQuantity();

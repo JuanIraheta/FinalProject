@@ -32,6 +32,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {NotEnoughFoundsException.class})
+    public ResponseEntity<?> handleNotEnoughFoundsException(NotEnoughFoundsException exception)
+    {
+        ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(value = {ResourceAlreadyExistException.class})
     public ResponseEntity<?> handleResourceAlreadyExistException(ResourceAlreadyExistException exception)
     {
