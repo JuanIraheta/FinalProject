@@ -13,7 +13,6 @@ import com.example.finalproject.service.mapper.CheckoutOrderMapper;
 import com.example.finalproject.service.mapper.PaymentMethodMapper;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -34,7 +33,6 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
-
     private final TransactionRepository transactionRepository;
 
 
@@ -103,10 +101,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
         CheckoutProduct checkoutProduct = getCheckoutProduct(checkout,getProduct);
 
+        //Method modifies the quanitty of the product
         setCheckoutProductQuantity(checkoutProduct, checkoutProduct.getQuantity() +
                 updateCheckoutProductDTO.getQuantity(), getProduct.getStock());
 
+        //Delete the product from checkout if quantity is zero
         deleteCheckoutProductQuantityZero(checkoutProduct);
+        //Delete Checkout when there are no products
         deleteCheckoutNoProducts(checkout);
     }
 
@@ -179,9 +180,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
 
         List<CheckoutUserAddressDTO> addressDTO = new ArrayList<>();
-        for (int i = 0; i < getAddresses.size(); i++)
+
+        for (Address address: getAddresses)
         {
-            CheckoutUserAddressDTO element = AddressMapper.INSTANCE.addressToCheckoutUserAddressDTO(getAddresses.get(i));
+            CheckoutUserAddressDTO element = AddressMapper.INSTANCE.addressToCheckoutUserAddressDTO(address);
             addressDTO.add(element);
         }
 
@@ -205,9 +207,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
             throw new ResourceNotFoundException("There are no payment methods in this user, try to create one");
         }
         List<PaymentMethodDTO> paymentMethodDTO = new ArrayList<>();
-        for (int i = 0; i < getPaymentMethods.size(); i++)
+
+        for (PaymentMethod paymentMethod: getPaymentMethods)
         {
-            PaymentMethodDTO element = PaymentMethodMapper.INSTANCE.paymentMethodToPaymentMethodDTO(getPaymentMethods.get(i));
+            PaymentMethodDTO element = PaymentMethodMapper.INSTANCE.paymentMethodToPaymentMethodDTO(paymentMethod);
             paymentMethodDTO.add(element);
         }
 
@@ -342,6 +345,19 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return transactionRepository.save(transaction);
     }
 
+    private Orders createOrderBasedOnCheckout (Checkout checkout)
+    {
+        Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
+
+        if (calculateCheckoutSubtotal(checkout) > createOrder.getPaymentMethod().getFounds())
+        {
+            throw new NotEnoughFoundsException("Not enough founds on your payment method");
+        }
+
+        //Generate basic order
+        return orderRepository.save(createOrder);
+    }
+
 
 
 
@@ -388,16 +404,5 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return checkoutProduct;
     }
 
-    private Orders createOrderBasedOnCheckout (Checkout checkout)
-    {
-        Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
 
-        if (calculateCheckoutSubtotal(checkout) > createOrder.getPaymentMethod().getFounds())
-        {
-            throw new NotEnoughFoundsException("Not enough founds on your payment method");
-        }
-
-        //Generate basic order
-        return orderRepository.save(createOrder);
-    }
 }
