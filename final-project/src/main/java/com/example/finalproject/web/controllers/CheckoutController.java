@@ -58,19 +58,11 @@ public class CheckoutController {
         return new ResponseEntity<>("Checkout Deleted Successfully",HttpStatus.OK);
     }
 
-
     @PutMapping(value = "API/users/checkouts/addresses")
     public ResponseEntity<String> changeCheckoutAddress (@RequestParam long addressID)
     {
         checkoutServiceImplementation.changeCheckoutAddress(addressID);
         return new ResponseEntity<>("Address Changed Successfully", HttpStatus.OK);
-    }
-
-    @PutMapping(value = "API/users/checkouts/payments")
-    public ResponseEntity<String> changeCheckoutPaymentMethod (@RequestParam long paymentID)
-    {
-        checkoutServiceImplementation.changeCheckoutPaymentMethod(paymentID);
-        return new ResponseEntity<>("Payment Method Changed Successfully", HttpStatus.OK);
     }
 
     @GetMapping(value = "/API/users/checkouts/addresses")
@@ -85,4 +77,25 @@ public class CheckoutController {
         checkoutServiceImplementation.createAddress(createAddressDTO);
         return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
     }
+
+    @PutMapping(value = "API/users/checkouts/payments")
+    public ResponseEntity<String> changeCheckoutPaymentMethod (@RequestParam long paymentID)
+    {
+        checkoutServiceImplementation.changeCheckoutPaymentMethod(paymentID);
+        return new ResponseEntity<>("Payment Method Changed Successfully", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/API/users/checkouts/payments")
+    public List<PaymentMethodDTO> getAllUserPaymentMethods()
+    {
+        return checkoutServiceImplementation.getAllPaymentMethods();
+    }
+
+//    @PostMapping(value = "/API/users/checkouts/payments")
+//    public ResponseEntity<String> createPaymentMethod (@RequestBody @Valid CreateAddressDTO createAddressDTO)
+//    {
+//        checkoutServiceImplementation.createAddress(createAddressDTO);
+//        return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
+//    }
+
 }
