@@ -8,6 +8,7 @@ import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
 import com.example.finalproject.service.mapper.AddressMapper;
 import com.example.finalproject.service.mapper.CheckoutMapper;
+import com.example.finalproject.service.mapper.PaymentMethodMapper;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -186,6 +187,23 @@ public class CheckoutServiceImplementation implements CheckoutService {
         addressRepository.save(createAddress);
     }
 
+    public List<PaymentMethodDTO> getAllPaymentMethods()
+    {
+        User user = getUser(1L);
+        List<PaymentMethod> getPaymentMethods = paymentMethodRepository.findAllByUser(user);
+        if (getPaymentMethods.isEmpty())
+        {
+            throw new ResourceNotFoundException("There are no payment methods in this user, try to create one");
+        }
+        List<PaymentMethodDTO> paymentMethodDTO = new ArrayList<>();
+        for (int i = 0; i < getPaymentMethods.size(); i++)
+        {
+            PaymentMethodDTO element = PaymentMethodMapper.INSTANCE.PaymentMethodToPaymentMethodDTO(getPaymentMethods.get(i));
+            paymentMethodDTO.add(element);
+        }
+
+        return paymentMethodDTO;
+    }
 
 
 

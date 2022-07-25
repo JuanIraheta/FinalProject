@@ -8,22 +8,21 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Entity
-@Table(name = "Order")
+@Table(name = "Orders")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Order {
+public class Orders {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private long id;
 
     @ManyToOne
     private User user;
-
 
     @OneToOne
     private Address address;

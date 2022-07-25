@@ -1,6 +1,5 @@
 package com.example.finalproject.persistence.repository;
 
-import com.example.finalproject.persistence.model.Order;
 import com.example.finalproject.persistence.model.OrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
