@@ -13,7 +13,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Setter
 @Builder
 public class ProductCheckoutDTO {
-
+//DTO used to show  only some information of the product checkout
     private String name;
 
     private double price;

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class PaymentMethodNoIdDTO {
-
+//DTO used to show the payment method information
     private String name;
 
     private String paymentType;

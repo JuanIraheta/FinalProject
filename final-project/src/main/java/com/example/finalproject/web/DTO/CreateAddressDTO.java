@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Builder
 public class CreateAddressDTO {
+//Dto used for creating an address in the checkout
 
     @Column
     @NotBlank(message = "House Number is Mandatory")

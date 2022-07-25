@@ -7,13 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class CreatePaymentMethodDTO {
-//Dto used to create a payment method on the checkout
-
+public class OrderProductDTO {
+//DTO to show information of an specific order Product
     private String name;
 
-    private double founds;
+    private double price;
 
-    private String paymentType;
-
+    private int quantity;
 }
