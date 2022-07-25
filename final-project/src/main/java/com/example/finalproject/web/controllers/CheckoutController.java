@@ -100,9 +100,10 @@ public class CheckoutController {
     }
 
     @PostMapping(value = "/API/users/checkouts/purchases")
-    public Orders generateOrder ()
+    public ResponseEntity<String> generateOrder ()
     {
-        return checkoutServiceImplementation.generateOrder();
+        checkoutServiceImplementation.generateOrder();
+        return new ResponseEntity<>("Order Successfully Generated", HttpStatus.OK);
     }
 
 }

@@ -34,6 +34,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
 
+    private final TransactionRepository transactionRepository;
+
 
     public CheckoutDTO getCheckout() {
         User user = getUser(1L);
@@ -219,7 +221,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         paymentMethodRepository.save(createPaymentMethod);
     }
 
-    public Orders generateOrder()
+    public void generateOrder()
     {
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
@@ -257,14 +259,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
                 .paymentMethod(order.getPaymentMethod())
                 .quantity(total)
                 .build();
-        order.setTransaction(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        order.setTransaction(savedTransaction);
 
         //Remove founds from payment method
-        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
+        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - savedTransaction.getQuantity());
         orderRepository.save(order);
-
-
-        return order;
     }
 
 
