@@ -205,6 +205,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return paymentMethodDTO;
     }
 
+    public void createPaymentMethod(CreatePaymentMethodDTO createPaymentMethodDTO)
+    {
+        User user = getUser(1L);
+        PaymentMethod createPaymentMethod = PaymentMethodMapper.INSTANCE.CreatePaymentMethodDTOToPaymentMethod(createPaymentMethodDTO);
+        createPaymentMethod.setUser(user);
+        paymentMethodRepository.save(createPaymentMethod);
+    }
+
 
 
 

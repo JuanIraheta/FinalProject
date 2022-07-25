@@ -91,11 +91,11 @@ public class CheckoutController {
         return checkoutServiceImplementation.getAllPaymentMethods();
     }
 
-//    @PostMapping(value = "/API/users/checkouts/payments")
-//    public ResponseEntity<String> createPaymentMethod (@RequestBody @Valid CreateAddressDTO createAddressDTO)
-//    {
-//        checkoutServiceImplementation.createAddress(createAddressDTO);
-//        return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
-//    }
+    @PostMapping(value = "/API/users/checkouts/payments")
+    public ResponseEntity<String> createPaymentMethod (@RequestBody @Valid CreatePaymentMethodDTO createPaymentMethodDTO)
+    {
+        checkoutServiceImplementation.createPaymentMethod(createPaymentMethodDTO);
+        return new ResponseEntity<>("Payment Method Added Successfully", HttpStatus.OK);
+    }
 
 }
