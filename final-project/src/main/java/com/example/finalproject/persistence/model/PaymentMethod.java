@@ -19,8 +19,13 @@ public class PaymentMethod {
     @Column
     private long id;
 
+    @Column
+    private String name;
+
+    @Column
     private double founds;
 
+    @Column
     private String paymentType;
 
     @ManyToOne

@@ -19,11 +19,15 @@ public class CheckoutDTO {
 
     private String userName;
 
-    private List<CheckoutProduct> checkoutProducts;
+    private String firstName;
 
-    private Address address;
+    private String lastName;
 
-    private PaymentMethod paymentMethod;
+    private List<ProductCheckoutDTO> checkoutProducts;
+
+    private CreateAddressDTO address;
+
+    private PaymentMethodNoIdDTO paymentMethod;
 
     private double subTotal;
 }

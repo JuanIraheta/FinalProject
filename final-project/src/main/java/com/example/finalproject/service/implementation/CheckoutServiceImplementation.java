@@ -41,6 +41,15 @@ public class CheckoutServiceImplementation implements CheckoutService {
         Checkout checkout = getCheckout(user);
 
         CheckoutDTO checkoutDTO = CheckoutMapper.INSTANCE.checkoutToCheckoutDTO(checkout);
+
+        List<ProductCheckoutDTO> productCheckoutDTO = new ArrayList<>();
+        for (CheckoutProduct checkoutProduct: checkout.getCheckoutProducts())
+        {
+            ProductCheckoutDTO dto = CheckoutMapper.INSTANCE.checkoutProductAndProductToProductCheckoutDTO
+                    (checkoutProduct,checkoutProduct.getProduct());
+            productCheckoutDTO.add(dto);
+        }
+        checkoutDTO.setCheckoutProducts(productCheckoutDTO);
         checkoutDTO.setSubTotal(calculateCheckoutSubtotal(checkout));
         return checkoutDTO;
     }

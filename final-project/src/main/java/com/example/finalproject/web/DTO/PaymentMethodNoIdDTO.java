@@ -7,13 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class CreatePaymentMethodDTO {
-
+public class PaymentMethodNoIdDTO {
 
     private String name;
 
-    private double founds;
-
     private String paymentType;
-
 }

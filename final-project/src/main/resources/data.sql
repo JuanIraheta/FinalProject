@@ -27,7 +27,7 @@ insert into Address (house_Number, street, city, `state`, user_id) values ('20',
 --
 -- insert into Payment_Method values (1l,50.00,'Debit Card',1);
 -- insert into Payment_Method values (2l,100.00,'Credit Card',1);
-insert into Payment_Method (founds, payment_Type, user_id) values (5.00,'Debit Card',1);
-insert into Payment_Method (founds, payment_Type, user_id) values (100.00,'Credit Card',1);
+insert into Payment_Method (`name`,founds, payment_Type, user_id) values ('my debit card',5.00,'Debit Card',1);
+insert into Payment_Method (`name`,founds, payment_Type, user_id) values ('my credit card',100.00,'Credit Card',1);
 
 

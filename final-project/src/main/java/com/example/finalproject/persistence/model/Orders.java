@@ -25,7 +25,7 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
+//    @JsonIgnore
     private User user;
 
     @OneToOne

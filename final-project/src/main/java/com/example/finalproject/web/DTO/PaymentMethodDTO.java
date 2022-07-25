@@ -19,7 +19,7 @@ public class PaymentMethodDTO {
     @Column
     private long id;
 
-    private double founds;
+    private String name;
 
     private String paymentType;
 }
