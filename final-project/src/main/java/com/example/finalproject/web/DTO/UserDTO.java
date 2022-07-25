@@ -1,21 +1,24 @@
 package com.example.finalproject.web.DTO;
 
 import com.example.finalproject.persistence.model.Address;
-import com.example.finalproject.persistence.model.CheckoutProduct;
 import com.example.finalproject.persistence.model.PaymentMethod;
-import com.example.finalproject.persistence.model.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
-public class CheckoutDTO {
-//DTO to show on JSON all the info of a checkout
+public class UserDTO {
+    //DTO used for showing important information about the user
+
+    private String email;
 
     private String userName;
 
@@ -23,11 +26,10 @@ public class CheckoutDTO {
 
     private String lastName;
 
-    private List<ProductCheckoutDTO> checkoutProducts;
+    private String phoneNumber;
 
-    private CreateAddressDTO address;
+    private List<CreateAddressDTO> address;
 
-    private PaymentMethodNoIdDTO paymentMethod;
+    private List<PaymentMethodNoIdDTO> paymentMethods;
 
-    private double subTotal;
 }

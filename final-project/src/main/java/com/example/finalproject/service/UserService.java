@@ -1,11 +1,12 @@
 package com.example.finalproject.service;
 
 import com.example.finalproject.persistence.model.User;
+import com.example.finalproject.web.DTO.UserDTO;
 
 import java.util.List;
 
 public interface UserService {
-    List<User> getAllUsers();
+    List<UserDTO>getAllUsers();
 
-    User getUser(long id);
+    UserDTO getUser(long id);
 }

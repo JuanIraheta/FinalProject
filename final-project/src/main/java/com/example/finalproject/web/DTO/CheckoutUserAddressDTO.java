@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Builder
 public class CheckoutUserAddressDTO {
-
+//Dto used for geting an address from the checkout
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column

@@ -2,6 +2,7 @@ package com.example.finalproject.web.controllers;
 
 import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.service.implementation.UserServiceImplementation;
+import com.example.finalproject.web.DTO.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +17,13 @@ public class UserController {
     private final UserServiceImplementation userServiceImplementation;
 
     @GetMapping(value = "/API/users")
-    public List<User> getUsers()
+    public List<UserDTO> getUsers()
     {
         return userServiceImplementation.getAllUsers();
     }
 
     @GetMapping(value = "/API/users/{id}")
-    public User getUsers(@PathVariable Long id)
+    public UserDTO getUsers(@PathVariable Long id)
     {
         return userServiceImplementation.getUser(id);
     }

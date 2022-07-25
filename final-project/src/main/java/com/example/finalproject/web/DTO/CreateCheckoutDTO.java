@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 public class CreateCheckoutDTO {
-
+//Dto used to create a checkout with basic information.
     private long userID;
 
     @NotEmpty(message = "Add at least one product")

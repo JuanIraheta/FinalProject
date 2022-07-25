@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CheckoutProductDTO {
+//DTO used for creating a checkout product
 
     private String productName;
 

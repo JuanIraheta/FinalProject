@@ -3,10 +3,13 @@ package com.example.finalproject.service.implementation;
 import com.example.finalproject.persistence.model.Product;
 import com.example.finalproject.persistence.repository.ProductRepository;
 import com.example.finalproject.service.ProductService;
+import com.example.finalproject.service.mapper.ProductsMapper;
+import com.example.finalproject.web.DTO.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,12 +20,21 @@ public class ProductServiceImplementation implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        List<ProductDTO> productDTOS = new ArrayList<>();
+
+        for (Product product: products)
+        {
+            ProductDTO dto = ProductsMapper.INSTANCE.productToProductDTO(product);
+            productDTOS.add(dto);
+        }
+
+        return productDTOS;
     }
 
     @Override
-    public Product getProduct(String name) {
-        return productRepository.findByName(name);
+    public ProductDTO getProduct(String name) {
+        return ProductsMapper.INSTANCE.productToProductDTO(productRepository.findByName(name));
     }
 }
