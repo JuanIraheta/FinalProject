@@ -1,5 +1,6 @@
 package com.example.finalproject.service.implementation;
 
+import com.example.finalproject.exception.NotEnoughFoundsException;
 import com.example.finalproject.exception.NotEnoughStockException;
 import com.example.finalproject.exception.ResourceAlreadyExistException;
 import com.example.finalproject.exception.ResourceNotFoundException;
@@ -30,9 +31,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
     private final PaymentMethodRepository paymentMethodRepository;
-
     private final OrderRepository orderRepository;
-
     private final OrderProductRepository orderProductRepository;
 
 
@@ -227,6 +226,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
         //Mapp the chekout info to the order
         Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
+        //Verify if has enough founds
+        if (calculateCheckoutSubtotal(checkout) > createOrder.getPaymentMethod().getFounds())
+        {
+            throw new NotEnoughFoundsException("Not enough founds on your payment method");
+        }
+
+        //Generate basic order
         Orders order = orderRepository.save(createOrder);
         double total = 0;
 
@@ -235,12 +241,29 @@ public class CheckoutServiceImplementation implements CheckoutService {
         {
             OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
             orderProduct.setOrder(order);
+            //Eliminating stocks from product
+            orderProduct.getProduct().setStock(orderProduct.getProduct().getStock() - orderProduct.getQuantity());
+            productRepository.save(orderProduct.getProduct());
+
+            //Getting total
             total += orderProduct.getProduct().getPrice() * orderProduct.getQuantity();
 
             orderProductRepository.save(orderProduct);
         }
+        //Save order with a total calculated by the checkout products
         order.setTotal(total);
+        //Generate Transaction
+        Transaction transaction = Transaction.builder()
+                .paymentMethod(order.getPaymentMethod())
+                .quantity(total)
+                .build();
+        order.setTransaction(transaction);
+
+        //Remove founds from payment method
+        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
         orderRepository.save(order);
+
+
         return order;
     }
 
