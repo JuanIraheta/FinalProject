@@ -1,7 +1,5 @@
 package com.example.finalproject.persistence.model;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,7 +23,6 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-//    @JsonIgnore
     private User user;
 
     @OneToOne

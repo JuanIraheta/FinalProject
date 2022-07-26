@@ -1,5 +1,6 @@
 package com.example.finalproject.service.implementation;
 
+import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.persistence.repository.UserRepository;
 import com.example.finalproject.service.UserService;
@@ -35,7 +36,17 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public UserDTO getUser(long id) {
-        Optional<User> foundUser = userRepository.findById(id);
-        return UserMapper.INSTANCE.userToUserDTO(foundUser.get());
+        User foundUser = foundUser(id);
+        return UserMapper.INSTANCE.userToUserDTO(foundUser);
+    }
+
+    private User foundUser (long id)
+    {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent())
+        {
+            throw new ResourceNotFoundException("We could not find a user with the given id");
+        }
+        return user.get();
     }
 }

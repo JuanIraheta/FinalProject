@@ -19,28 +19,34 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {ResourceNotFoundException.class})
-    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException exception)
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException exception)
+    {
+        ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(value = {RequiredInformationNullException.class})
+    public ResponseEntity<Object> handleRequiredInformationNullException(RequiredInformationNullException exception)
     {
         ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {NotEnoughStockException.class})
-    public ResponseEntity<?> handleNotEnoughStockException(NotEnoughStockException exception)
+    public ResponseEntity<Object> handleNotEnoughStockException(NotEnoughStockException exception)
     {
         ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {NotEnoughFoundsException.class})
-    public ResponseEntity<?> handleNotEnoughFoundsException(NotEnoughFoundsException exception)
+    public ResponseEntity<Object> handleNotEnoughFoundsException(NotEnoughFoundsException exception)
     {
         ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {ResourceAlreadyExistException.class})
-    public ResponseEntity<?> handleResourceAlreadyExistException(ResourceAlreadyExistException exception)
+    public ResponseEntity<Object> handleResourceAlreadyExistException(ResourceAlreadyExistException exception)
     {
         ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);

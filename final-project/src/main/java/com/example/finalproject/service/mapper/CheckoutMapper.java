@@ -4,7 +4,6 @@ import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.persistence.model.CheckoutProduct;
 import com.example.finalproject.persistence.model.Product;
 import com.example.finalproject.web.DTO.CheckoutDTO;
-import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import com.example.finalproject.web.DTO.ProductCheckoutDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,18 +17,14 @@ public interface CheckoutMapper {
 
     CheckoutMapper INSTANCE = Mappers.getMapper(CheckoutMapper.class);
 
-    @Mappings({
-            @Mapping(target = "userName", source = "checkout.user.userName"),
-            @Mapping(target = "firstName", source = "checkout.user.firstName"),
-            @Mapping(target = "lastName", source = "checkout.user.lastName"),
-    })
+    @Mapping(target = "userName", source = "checkout.user.userName")
+    @Mapping(target = "firstName", source = "checkout.user.firstName")
+    @Mapping(target = "lastName", source = "checkout.user.lastName")
     CheckoutDTO checkoutToCheckoutDTO(Checkout checkout);
 
-    @Mappings({
-            @Mapping(target = "name", source = "product.name"),
-            @Mapping(target = "price", source = "product.price"),
-            @Mapping(target = "quantity", source = "checkoutProduct.quantity"),
-    })
+    @Mapping(target = "name", source = "product.name")
+    @Mapping(target = "price", source = "product.price")
+    @Mapping(target = "quantity", source = "checkoutProduct.quantity")
     ProductCheckoutDTO checkoutProductAndProductToProductCheckoutDTO (CheckoutProduct checkoutProduct, Product product);
 }
 

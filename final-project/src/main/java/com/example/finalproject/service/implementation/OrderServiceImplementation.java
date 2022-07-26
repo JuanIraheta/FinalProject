@@ -4,9 +4,9 @@ import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.OrderProduct;
 import com.example.finalproject.persistence.model.Orders;
 import com.example.finalproject.persistence.model.User;
-import com.example.finalproject.persistence.repository.OrderProductRepository;
 import com.example.finalproject.persistence.repository.OrderRepository;
 import com.example.finalproject.persistence.repository.UserRepository;
+import com.example.finalproject.service.OrderService;
 import com.example.finalproject.service.mapper.OrderMapper;
 import com.example.finalproject.web.DTO.OrderDTO;
 import com.example.finalproject.web.DTO.OrderProductDTO;
@@ -21,14 +21,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class OrderServiceImplementation {
+public class OrderServiceImplementation implements OrderService {
 
     private final OrderRepository orderRepository;
-
-    private final OrderProductRepository orderProductRepository;
-
     private final UserRepository userRepository;
 
+    @Override
     public List<OrderDTO> getAllOrders()
     {
         User user = getUser(1L);
@@ -37,18 +35,29 @@ public class OrderServiceImplementation {
         for (Orders order: orders)
         {
             OrderDTO dto = OrderMapper.INSTANCE.orderToOrderDTO(order);
+
+            mappingOrderProducts(dto,order);
+
             orderDTOS.add(dto);
         }
 
         return orderDTOS;
     }
 
+    @Override
     public OrderDTO getOrder(long id)
     {
         User user = getUser(1L);
         Orders order = orderRepository.findByUserAndId(user,id);
         OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(order);
 
+        mappingOrderProducts(orderDTO,order);
+
+        return orderDTO;
+    }
+
+    private void mappingOrderProducts (OrderDTO orderDTO, Orders order)
+    {
         List<OrderProductDTO> orderProductDTOS = new ArrayList<>();
 
         for (OrderProduct orderProduct: order.getOrderProducts())
@@ -58,11 +67,7 @@ public class OrderServiceImplementation {
             orderProductDTOS.add(dto);
         }
         orderDTO.setOrderProducts(orderProductDTOS);
-        return orderDTO;
     }
-
-
-
 
 
 
