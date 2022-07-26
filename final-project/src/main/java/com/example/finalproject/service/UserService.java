@@ -1,6 +1,5 @@
 package com.example.finalproject.service;
 
-import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.web.DTO.UserDTO;
 
 import java.util.List;

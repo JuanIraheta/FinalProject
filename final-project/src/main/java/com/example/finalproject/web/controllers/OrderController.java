@@ -1,9 +1,6 @@
 package com.example.finalproject.web.controllers;
 
-import com.example.finalproject.persistence.model.Orders;
-import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
 import com.example.finalproject.service.implementation.OrderServiceImplementation;
-import com.example.finalproject.web.DTO.CheckoutDTO;
 import com.example.finalproject.web.DTO.OrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

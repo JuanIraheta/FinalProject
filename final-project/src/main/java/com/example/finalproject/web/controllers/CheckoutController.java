@@ -1,6 +1,5 @@
 package com.example.finalproject.web.controllers;
 
-import com.example.finalproject.persistence.model.Orders;
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,7 @@ public class CheckoutController {
     @PutMapping(value = "/API/users/checkouts/products/{id}")
     public ResponseEntity<String> modifyCheckoutProductQuantity (@PathVariable String id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
     {
-        checkoutServiceImplementation.modifyProductQuantity(id,checkoutProductDTO);
+        checkoutServiceImplementation.modifyCheckoutProductQuantity(id,checkoutProductDTO);
         return new ResponseEntity<>("Product quantity modified successfully", HttpStatus.OK);
     }
 

@@ -1,9 +1,6 @@
 package com.example.finalproject.service.implementation;
 
-import com.example.finalproject.exception.NotEnoughFoundsException;
-import com.example.finalproject.exception.NotEnoughStockException;
-import com.example.finalproject.exception.ResourceAlreadyExistException;
-import com.example.finalproject.exception.ResourceNotFoundException;
+import com.example.finalproject.exception.*;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
@@ -36,6 +33,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final TransactionRepository transactionRepository;
 
 
+    @Override
     public CheckoutDTO getCheckout() {
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
@@ -54,6 +52,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return checkoutDTO;
     }
 
+    @Override
     public void createCheckOut(CreateCheckoutDTO checkoutDTO)
     {
         //Validates the user
@@ -81,6 +80,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
     }
 
+    @Override
     public void addProductToCheckout(CheckoutProductDTO checkoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
@@ -96,13 +96,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
             createCheckoutProduct(getProduct,checkoutProductDTO.getQuantity(),checkout);
             return;
         }
-        //if it exist we validate and set the quantity
+        //if exist we validate and set the quantity
         setCheckoutProductQuantity(checkoutProduct,checkoutProduct.getQuantity() +
                 checkoutProductDTO.getQuantity(),getProduct.getStock());
     }
 
 
-    public void modifyProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
+    @Override
+    public void modifyCheckoutProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
@@ -115,12 +116,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
                 updateCheckoutProductDTO.getQuantity(), getProduct.getStock());
 
         //Delete the product from checkout if quantity is zero
-        deleteCheckoutProductQuantityZero(checkoutProduct);
+        deleteCheckoutProductWhenQuantityZero(checkoutProduct);
         //Delete Checkout when there are no products
         deleteCheckoutNoProducts(checkout);
     }
 
 
+    @Override
     public void deleteCheckoutProduct(String productName)
     {
         User user = getUser(1L);
@@ -139,6 +141,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         deleteCheckoutNoProducts(checkout);
     }
 
+    @Override
     public void deleteCheckout()
     {
         User user = getUser(1L);
@@ -147,6 +150,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutRepository.delete(checkout);
     }
 
+    @Override
     public void changeCheckoutAddress (long id)
     {
         User user = getUser(1L);
@@ -163,6 +167,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutRepository.save(checkout);
     }
 
+    @Override
     public void changeCheckoutPaymentMethod (long id)
     {
         User user = getUser(1L);
@@ -179,6 +184,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutRepository.save(checkout);
     }
 
+    @Override
     public List<CheckoutUserAddressDTO> getAllAddresses()
     {
         User user = getUser(1L);
@@ -199,6 +205,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return addressDTO;
     }
 
+    @Override
     public void createAddress(CreateAddressDTO createAddressDTO)
     {
         User user = getUser(1L);
@@ -207,6 +214,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         addressRepository.save(createAddress);
     }
 
+    @Override
     public List<PaymentMethodDTO> getAllPaymentMethods()
     {
         User user = getUser(1L);
@@ -226,6 +234,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return paymentMethodDTO;
     }
 
+    @Override
     public void createPaymentMethod(CreatePaymentMethodDTO createPaymentMethodDTO)
     {
         User user = getUser(1L);
@@ -234,10 +243,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
         paymentMethodRepository.save(createPaymentMethod);
     }
 
+    @Override
     public void generateOrder()
     {
         User user = getUser(1L);
         Checkout checkout = getCheckout(user);
+        mandatoryCheckoutElementsValidation(checkout);
         //Generate basic order
         Orders order = createOrderBasedOnCheckout(checkout);
 
@@ -259,9 +270,6 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
 
-
-
-
     //Secondary Methods
     //Sets the products quantity on the checkout product
     private void setCheckoutProductQuantity(CheckoutProduct checkoutProduct, int quantity, int stock)
@@ -274,7 +282,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.save(checkoutProduct);
     }
 
-    private void deleteCheckoutProductQuantityZero(CheckoutProduct checkoutProduct)
+    private void deleteCheckoutProductWhenQuantityZero(CheckoutProduct checkoutProduct)
     {
         if (checkoutProduct.getQuantity() <= 0)
         {
@@ -365,6 +373,18 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
         //Generate basic order
         return orderRepository.save(createOrder);
+    }
+
+    private void mandatoryCheckoutElementsValidation(Checkout checkout)
+    {
+        if (checkout.getAddress() == null)
+        {
+            throw new RequiredInformationNullException("Address is mandatory, please set one to continue");
+        }
+        if (checkout.getPaymentMethod() == null)
+        {
+            throw new RequiredInformationNullException("PaymentMethod is mandatory, please set one to continue");
+        }
     }
 
 

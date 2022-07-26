@@ -1,6 +1,5 @@
 package com.example.finalproject.web.controllers;
 
-import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.service.implementation.UserServiceImplementation;
 import com.example.finalproject.web.DTO.UserDTO;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,5 @@
 package com.example.finalproject.web.controllers;
 
-import com.example.finalproject.persistence.model.Product;
 import com.example.finalproject.service.implementation.ProductServiceImplementation;
 import com.example.finalproject.web.DTO.ProductDTO;
 import lombok.RequiredArgsConstructor;

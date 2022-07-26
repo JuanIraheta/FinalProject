@@ -28,12 +28,12 @@ public class Product
 
     @Column
     @NotNull(message = "Price is Mandatory")
-    @PositiveOrZero
+    @PositiveOrZero(message = "price must be a positive value")
     private double price;
 
     @Column
     @NotNull(message = "Stock is Mandatory")
-    @PositiveOrZero
+    @PositiveOrZero(message = "stock must be a positive value")
     private int stock;
 
 }

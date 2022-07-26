@@ -3,6 +3,8 @@ package com.example.finalproject.persistence.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "Transaction")
@@ -17,6 +19,9 @@ public class Transaction {
     @Column
     private long id;
 
+    @Column
+    @PositiveOrZero(message = "Quantity must be positive number")
+    @NotNull(message = "quantity is mandatory")
     private double quantity;
 
     @ManyToOne
