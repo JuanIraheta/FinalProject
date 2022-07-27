@@ -6,6 +6,9 @@ import com.example.finalproject.web.DTO.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,9 +36,14 @@ public class UserController {
     }
 
     @GetMapping(value = "/test")
-    public ResponseEntity<String> tets ()
+    public ResponseEntity<String> test (@AuthenticationPrincipal Jwt principal)
     {
-        return new ResponseEntity<>("test", HttpStatus.OK);
+        if (principal == null)
+        {
+            return new ResponseEntity<>("Authenticate", HttpStatus.UNAUTHORIZED);
+        }
+        String email = principal.getClaims().get("email").toString();
+        return new ResponseEntity<>(email, HttpStatus.OK);
     }
 
 

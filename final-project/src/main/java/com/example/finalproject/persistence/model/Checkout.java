@@ -24,7 +24,7 @@ public class Checkout {
     private User user;
 
     @Column
-    @OneToMany(mappedBy = "checkout")
+    @OneToMany(mappedBy = "checkout",cascade = CascadeType.ALL)
     private List<CheckoutProduct>checkoutProducts;
 
     @OneToOne

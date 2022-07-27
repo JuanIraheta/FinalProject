@@ -43,9 +43,16 @@ public class SecurityConfig {
     {
         http
                 .authorizeRequests()
-                .anyRequest().authenticated()
+                .antMatchers("/h2-console/**").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/API/**").fullyAuthenticated()
                 .and()
                 .oauth2ResourceServer().jwt();
+
+        //H2 console now can run with this configuration
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
 
         return http.build();
     }
