@@ -7,11 +7,11 @@ insert into Users (email, user_Name, first_Name, last_Name, phone_Number) values
 insert into Users (email, user_Name, first_Name, last_Name, phone_Number) values ('irahetajuanjose@gmail.com','Sephirtod','Jose','Martinez','+503 2288 3394');
 insert into Users (email, user_Name, first_Name, last_Name, phone_Number) values ('itest@gmail.com','tester','tester','tester','+503 2385 3444');
 
--- insert into Address (house_Number, street, city, `state`, user_id) values ('12-2','10 calle ote','santa tecla','La Libertad',1);
--- insert into Address (house_Number, street, city, `state`, user_id) values ('17','calle teotl','Antiguo Cuscatlan','San Salvador',1);
--- insert into Address (house_Number, street, city, `state`, user_id) values ('20','av yumuri','san salvador','san salvador',2);
---
--- insert into Payment_Method (`name`,founds, payment_Type, user_id) values ('my debit card',5.00,'Debit Card',1);
--- insert into Payment_Method (`name`,founds, payment_Type, user_id) values ('my credit card',100.00,'Credit Card',1);
+insert into Address (house_Number, street, city, `state`, user_id) values ('12-2','10 calle ote','santa tecla','La Libertad',1);
+insert into Address (house_Number, street, city, `state`, user_id) values ('17','calle teotl','Antiguo Cuscatlan','San Salvador',1);
+insert into Address (house_Number, street, city, `state`, user_id) values ('20','av yumuri','san salvador','san salvador',2);
+
+insert into Payment_Method (`name`,founds, payment_Type, user_id) values ('my debit card',5.00,'Debit Card',1);
+insert into Payment_Method (`name`,founds, payment_Type, user_id) values ('my credit card',100.00,'Credit Card',1);
 
 

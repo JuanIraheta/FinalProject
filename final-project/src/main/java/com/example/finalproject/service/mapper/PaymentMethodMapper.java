@@ -7,13 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 @Component
 public interface PaymentMethodMapper {
 
     PaymentMethodMapper INSTANCE = Mappers.getMapper(PaymentMethodMapper.class);
 
-    PaymentMethodDTO paymentMethodToPaymentMethodDTO(PaymentMethod paymentMethod);
+    List<PaymentMethodDTO> paymentMethodToPaymentMethodDTO(List<PaymentMethod> paymentMethod);
 
     PaymentMethod createPaymentMethodDTOToPaymentMethod(CreatePaymentMethodDTO createPaymentMethodDTO);
 
