@@ -15,7 +15,7 @@ import java.util.List;
 public class Checkout {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private long id;
 

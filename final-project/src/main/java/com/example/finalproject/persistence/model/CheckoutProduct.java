@@ -16,7 +16,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Builder
 public class CheckoutProduct {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
     private long id;
 

@@ -19,26 +19,26 @@ public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
 
-    @Override
-    public List<UserDTO> getAllUsers() {
+//    @Override
+//    public List<UserDTO> getAllUsers() {
+//
+//        List<User> users = userRepository.findAll();
+//        return UserMapper.INSTANCE.usersToUserDTOS(users);
+//    }
 
-        List<User> users = userRepository.findAll();
-        return UserMapper.INSTANCE.usersToUserDTOS(users);
-    }
-
     @Override
-    public UserDTO getUser(long id) {
-        User foundUser = foundUser(id);
+    public UserDTO getUser(String userEmail) {
+        User foundUser = foundUser(userEmail);
         return UserMapper.INSTANCE.userToUserDTO(foundUser);
     }
 
-    private User foundUser (long id)
+    private User foundUser (String email)
     {
-        Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent())
+        User user = userRepository.findByEmail(email);
+        if (user == null)
         {
             throw new ResourceNotFoundException("We could not find a user with the given id");
         }
-        return user.get();
+        return user;
     }
 }

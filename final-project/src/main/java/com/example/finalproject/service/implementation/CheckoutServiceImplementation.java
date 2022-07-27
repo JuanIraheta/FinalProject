@@ -34,9 +34,9 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     @Override
-    public CheckoutDTO getCheckout() {
+    public CheckoutDTO getCheckout(String email) {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates if the checkout exist before obtaining it
         Checkout checkout = getCheckout(user);
 
@@ -59,10 +59,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void createCheckOut(CreateCheckoutDTO checkoutDTO)
+    public void createCheckOut(String email,CreateCheckoutDTO checkoutDTO)
     {
         //Find and validates the user
-        User user = getUser(checkoutDTO.getUserID());
+        User user = getUser(email);
 
         //Find the checkout of the user
         Checkout getCheckout = checkoutRepository.findByUser(user);
@@ -88,10 +88,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void addProductToCheckout(CheckoutProductDTO checkoutProductDTO)
+    public void addProductToCheckout(String email,CheckoutProductDTO checkoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
 
         //If checkout doesn't exists it creates one
         Checkout checkout = checkoutRepository.findByUser(user);
@@ -120,10 +120,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     @Override
-    public void modifyCheckoutProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
+    public void modifyCheckoutProductQuantity(String email,String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
         //Validates that the product exist before obtaining it
@@ -136,18 +136,19 @@ public class CheckoutServiceImplementation implements CheckoutService {
         setCheckoutProductQuantity(checkoutProduct, checkoutProduct.getQuantity() +
                 updateCheckoutProductDTO.getQuantity(), getProduct.getStock());
 
-        //Delete the product from checkout if quantity is zero
+        //Delete product form checkout when quantity is zero
         deleteCheckoutProductWhenQuantityZero(checkoutProduct);
+        checkoutRepository.save(checkout);
         //Delete Checkout when there are no products
         deleteCheckoutNoProducts(checkout);
     }
 
 
     @Override
-    public void deleteCheckoutProduct(String productName)
+    public void deleteCheckoutProduct(String email,String productName)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
         //Validates that the product exist before obtaining it
@@ -164,17 +165,15 @@ public class CheckoutServiceImplementation implements CheckoutService {
         // Erase the product
         checkoutProductRepository.delete(checkoutProduct);
 
-        //Delete product form checkout when quantity is zero
-        deleteCheckoutProductWhenQuantityZero(checkoutProduct);
         //If there is no more products on this checkout then delete it
         deleteCheckoutNoProducts(checkout);
     }
 
     @Override
-    public void deleteCheckout()
+    public void deleteCheckout(String email)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
 
@@ -183,10 +182,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void changeCheckoutAddress (long id)
+    public void changeCheckoutAddress (String email,long id)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
 
@@ -206,10 +205,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void changeCheckoutPaymentMethod (long id)
+    public void changeCheckoutPaymentMethod (String email,long id)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
 
@@ -229,10 +228,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public List<CheckoutUserAddressDTO> getAllAddresses()
+    public List<CheckoutUserAddressDTO> getAllAddresses(String email)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Find all the addresses related to the user
         List<Address> getAddresses = addressRepository.findAllByUser(user);
         if (getAddresses.isEmpty())
@@ -244,10 +243,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void createAddress(CreateAddressDTO createAddressDTO)
+    public void createAddress(String email,CreateAddressDTO createAddressDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Mapping the dto to an address
         Address createAddress = AddressMapper.INSTANCE.createAddressDTOToAddress(createAddressDTO);
         createAddress.setUser(user);
@@ -256,10 +255,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public List<PaymentMethodDTO> getAllPaymentMethods()
+    public List<PaymentMethodDTO> getAllPaymentMethods(String email)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Find all the payment method related to the user
         List<PaymentMethod> getPaymentMethods = paymentMethodRepository.findAllByUser(user);
         if (getPaymentMethods.isEmpty())
@@ -271,10 +270,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void createPaymentMethod(CreatePaymentMethodDTO createPaymentMethodDTO)
+    public void createPaymentMethod(String email,CreatePaymentMethodDTO createPaymentMethodDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Mapping the dto to a payment method
         PaymentMethod createPaymentMethod = PaymentMethodMapper.INSTANCE.createPaymentMethodDTOToPaymentMethod(createPaymentMethodDTO);
         createPaymentMethod.setUser(user);
@@ -283,10 +282,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void generateOrder()
+    public void generateOrder(String email)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
+        User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
         //Verify if the address and payment of the checkout are not null
@@ -308,7 +307,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         //Saving the order with all the elements and deleting the checkout
         orderRepository.save(order);
         // deletes the checkout after the order is completed
-        deleteCheckout();
+        deleteCheckout(email);
     }
 
 
@@ -464,14 +463,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     ////Validates the Objects we recieve
-    private User getUser (long id)
+    private User getUser (String email)
     {
-        Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent())
+        User user = userRepository.findByEmail(email);
+        if (user == null)
         {
             throw new ResourceNotFoundException("We could not find a user with the given id");
         }
-        return user.get();
+        return user;
     }
 
     private Product getProduct (String name)

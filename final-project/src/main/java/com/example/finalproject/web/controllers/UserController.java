@@ -23,16 +23,16 @@ public class UserController {
 
     private final UserServiceImplementation userServiceImplementation;
 
-    @GetMapping(value = "/API/users")
-    public List<UserDTO> getUsers()
-    {
-        return userServiceImplementation.getAllUsers();
-    }
+//    @GetMapping(value = "/API/users")
+//    public List<UserDTO> getUsers()
+//    {
+//        return userServiceImplementation.getAllUsers();
+//    }
 
-    @GetMapping(value = "/API/users/{id}")
-    public UserDTO getUsers(@PathVariable Long id)
+    @GetMapping(value = "/API/users")
+    public UserDTO getUsers(@AuthenticationPrincipal Jwt principal)
     {
-        return userServiceImplementation.getUser(id);
+        return userServiceImplementation.getUser(getEmailByPrincipal(principal));
     }
 
     @GetMapping(value = "/test")
@@ -44,6 +44,11 @@ public class UserController {
         }
         String email = principal.getClaims().get("email").toString();
         return new ResponseEntity<>(email, HttpStatus.OK);
+    }
+
+    private String getEmailByPrincipal (Jwt principal)
+    {
+        return principal.getClaims().get("email").toString();
     }
 
 

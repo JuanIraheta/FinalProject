@@ -1,9 +1,11 @@
 package com.example.finalproject.web.DTO;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
@@ -12,9 +14,14 @@ import java.util.List;
 @Builder
 public class CreateCheckoutDTO {
 //Dto used to create a checkout with basic information.
-    private long userID;
 
     @NotEmpty(message = "Add at least one product")
+    @Valid
     private List<CheckoutProductDTO> products;
+
+    @JsonCreator
+    public CreateCheckoutDTO(List<CheckoutProductDTO> products) {
+        this.products = products;
+    }
 
 }
