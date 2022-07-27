@@ -23,15 +23,7 @@ public class UserServiceImplementation implements UserService {
     public List<UserDTO> getAllUsers() {
 
         List<User> users = userRepository.findAll();
-        List<UserDTO> userDTOS = new ArrayList<>();
-
-        for (User user: users)
-        {
-            UserDTO dto = UserMapper.INSTANCE.userToUserDTO(user);
-            userDTOS.add(dto);
-        }
-
-        return userDTOS;
+        return UserMapper.INSTANCE.usersToUserDTOS(users);
     }
 
     @Override

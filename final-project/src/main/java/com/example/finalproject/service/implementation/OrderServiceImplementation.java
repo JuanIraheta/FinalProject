@@ -29,15 +29,25 @@ public class OrderServiceImplementation implements OrderService {
     @Override
     public List<OrderDTO> getAllOrders()
     {
+        //Get the valid user from database
         User user = getUser(1L);
+        //Find a list of orders from the user
         List<Orders> orders = orderRepository.findAllByUser(user);
+        if (orders.isEmpty())
+        {
+            throw new ResourceNotFoundException("There are no orders in this user");
+        }
+        //Mapping the all the orders to its DTO
         List<OrderDTO> orderDTOS = new ArrayList<>();
         for (Orders order: orders)
         {
+            //Mapping the order
             OrderDTO dto = OrderMapper.INSTANCE.orderToOrderDTO(order);
 
+            //Mapping the order products to its dto
             mappingOrderProducts(dto,order);
 
+            //Adding the dtos to the dto list
             orderDTOS.add(dto);
         }
 
@@ -47,15 +57,24 @@ public class OrderServiceImplementation implements OrderService {
     @Override
     public OrderDTO getOrder(long id)
     {
+        //getting a valid user
         User user = getUser(1L);
+        //getting the specific order from the user and the id
         Orders order = orderRepository.findByUserAndId(user,id);
+        if (order == null)
+        {
+            throw new ResourceNotFoundException("Order not found");
+        }
+        //Mapping the specific order to its dto
         OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(order);
 
+        //mapping the products of the order to its dto
         mappingOrderProducts(orderDTO,order);
 
         return orderDTO;
     }
 
+    //Method used to map the specific order products to an order product dto
     private void mappingOrderProducts (OrderDTO orderDTO, Orders order)
     {
         List<OrderProductDTO> orderProductDTOS = new ArrayList<>();
@@ -70,7 +89,7 @@ public class OrderServiceImplementation implements OrderService {
     }
 
 
-
+    //get an specific user from the database
     private User getUser (long id)
     {
         Optional<User> user = userRepository.findById(id);
@@ -80,4 +99,5 @@ public class OrderServiceImplementation implements OrderService {
         }
         return user.get();
     }
+
 }

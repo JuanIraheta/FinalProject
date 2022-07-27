@@ -164,6 +164,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
         // Erase the product
         checkoutProductRepository.delete(checkoutProduct);
 
+        //Delete product form checkout when quantity is zero
+        deleteCheckoutProductWhenQuantityZero(checkoutProduct);
         //If there is no more products on this checkout then delete it
         deleteCheckoutNoProducts(checkout);
     }
@@ -175,6 +177,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
         User user = getUser(1L);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
+
+        checkoutProductRepository.deleteAllByCheckout(checkout);
         checkoutRepository.delete(checkout);
     }
 
