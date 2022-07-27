@@ -1,44 +1,53 @@
 package com.example.finalproject.config;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.web.SecurityFilterChain;
 
-@KeycloakConfiguration
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+//@Configuration
+//public class SecurityConfig extends WebSecurityConfigurerAdapter {
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception
+//    {
+//        http.csrf().disable();
+//        http.cors().and().authorizeRequests().anyRequest().authenticated().and().oauth2ResourceServer().jwt();
+//    }
 
-    // Task the Simple Authorittie Mapper to make sure roles are not prefixed with ROLE_
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception
-    {
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+//    @Bean
+//    JwtDecoder jwtDecoder(OAuth2ResourceServerProperties properties, @Value("${auth0.audience}") String audience) {
+//    /*
+//        By default, Spring Security does not validate the "aud" claim of the token, to ensure that this token is
+//        indeed intended for our app. Adding our own validator is easy to do:
+//        */    String issuerUri = properties.getJwt().getIssuerUri();
+//        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+//        OAuth2TokenValidator<Jwt> audienceValidator = AudienceValidator.of(audience);
+//        OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
+//        OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);    jwtDecoder.setJwtValidator(withAudience);    return jwtDecoder;
+//    }
+//}
 
-        auth.authenticationProvider(keycloakAuthenticationProvider);
-    }
+@Configuration
+public class SecurityConfig {
 
     @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy()
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
-        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception
-    {
-        super.configure(http);
         http
                 .authorizeRequests()
-                .antMatchers("/API").authenticated();
-//                .anyRequest().permitAll();
+                .anyRequest().authenticated()
+                .and()
+                .oauth2ResourceServer().jwt();
+
+        return http.build();
     }
 }
+
