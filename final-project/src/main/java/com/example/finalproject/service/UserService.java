@@ -5,7 +5,7 @@ import com.example.finalproject.web.DTO.UserDTO;
 import java.util.List;
 
 public interface UserService {
-    List<UserDTO>getAllUsers();
+//    List<UserDTO>getAllUsers();
 
-    UserDTO getUser(long id);
+    UserDTO getUser(String email);
 }

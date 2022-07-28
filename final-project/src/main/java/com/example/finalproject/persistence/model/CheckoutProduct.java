@@ -26,7 +26,6 @@ public class CheckoutProduct {
 
     @Column
     @NotNull(message = "Stock is Mandatory")
-    @PositiveOrZero
     private int quantity;
 
     @ManyToOne

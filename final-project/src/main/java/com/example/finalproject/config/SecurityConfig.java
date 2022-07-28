@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.*;
+
 import org.springframework.security.web.SecurityFilterChain;
 
 //@Configuration
@@ -43,9 +40,16 @@ public class SecurityConfig {
     {
         http
                 .authorizeRequests()
-                .anyRequest().authenticated()
+                .antMatchers("/h2-console/**").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/API/**").fullyAuthenticated()
                 .and()
                 .oauth2ResourceServer().jwt();
+
+        //H2 console now can run with this configuration
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
 
         return http.build();
     }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +33,16 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     @Override
-    public CheckoutDTO getCheckout() {
-        User user = getUser(1L);
+    public CheckoutDTO getCheckout(String email) {
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates if the checkout exist before obtaining it
         Checkout checkout = getCheckout(user);
 
+        //Mapping the checkout to its dto
         CheckoutDTO checkoutDTO = CheckoutMapper.INSTANCE.checkoutToCheckoutDTO(checkout);
 
+        //Mapping each checkout product to its dto
         List<ProductCheckoutDTO> productCheckoutDTO = new ArrayList<>();
         for (CheckoutProduct checkoutProduct: checkout.getCheckoutProducts())
         {
@@ -47,68 +50,85 @@ public class CheckoutServiceImplementation implements CheckoutService {
                     (checkoutProduct,checkoutProduct.getProduct());
             productCheckoutDTO.add(dto);
         }
+        //Setting the list of product dtos to the checkout dto
         checkoutDTO.setCheckoutProducts(productCheckoutDTO);
+        //Calculates a subtotal and set it to the checkout dto
         checkoutDTO.setSubTotal(calculateCheckoutSubtotal(checkout));
         return checkoutDTO;
     }
 
     @Override
-    public void createCheckOut(CreateCheckoutDTO checkoutDTO)
+    public void createCheckOut(String email,CreateCheckoutDTO checkoutDTO)
     {
-        //Validates the user
-        User user = getUser(checkoutDTO.getUserID());
+        //Find and validates the user
+        User user = getUser(email);
+
+        //Find the checkout of the user
         Checkout getCheckout = checkoutRepository.findByUser(user);
-        //The user can have only one checkout
+        //The user can have only one checkout, if there is one throw exception
         if (getCheckout != null)
         {
             throw new ResourceAlreadyExistException("This user already has a checkout");
         }
-        //Creates the Checkout with user information
-        Checkout checkout = Checkout.builder()
-                .user(user)
-                .address(user.getAddress().isEmpty() ? null : user.getAddress().get(0))
-                .paymentMethod(user.getPaymentMethods().isEmpty() ? null : user.getPaymentMethods().get(0))
-                .build();
+
+        //If there is no checkout we create a new one and save it
+        Checkout checkout = createCheckoutBasedOnUser(user);
         Checkout savedCheckout = checkoutRepository.save(checkout);
 
         //Creates the specific checkout products with dto list information
         for (int i= 0; i < checkoutDTO.getProducts().size();i++)
         {
+            //Obtains the specific product and validates its existence
             Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getProductName());
+            //Validates if there is enough stock and creates the checkout product
             createCheckoutProduct(getProduct,checkoutDTO.getProducts().get(i).getQuantity(),savedCheckout);
         }
 
     }
 
     @Override
-    public void addProductToCheckout(CheckoutProductDTO checkoutProductDTO)
+    public void addProductToCheckout(String email,CheckoutProductDTO checkoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
-        User user = getUser(1L);
-        Checkout checkout = getCheckout(user);
+        User user = getUser(email);
+
+        //If checkout doesn't exists it creates one
+        Checkout checkout = checkoutRepository.findByUser(user);
+        if (checkout == null)
+        {
+            checkout = createCheckoutBasedOnUser(user);
+            checkout = checkoutRepository.save(checkout);
+        }
+
+        //Obtaining the specific product
         Product getProduct = getProduct(checkoutProductDTO.getProductName());
 
-        //Trying to find a checkout product
+        //Trying to find a checkout product with this product
         CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
-        //If it doesnt exist we create a new one
+        //If it doesn't exist we create a new one
         if (checkoutProduct == null)
         {
+            //Validates if there is enough stock and creates the checkout product
             createCheckoutProduct(getProduct,checkoutProductDTO.getQuantity(),checkout);
             return;
         }
-        //if exist we validate and set the quantity
+        //if exist we validate that there is enough stock and set the quantity
         setCheckoutProductQuantity(checkoutProduct,checkoutProduct.getQuantity() +
                 checkoutProductDTO.getQuantity(),getProduct.getStock());
     }
 
 
     @Override
-    public void modifyCheckoutProductQuantity(String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
+    public void modifyCheckoutProductQuantity(String email,String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
+        //Validates that the product exist before obtaining it
         Product getProduct = getProduct(productName);
 
+        //Validates that the checkout product exist before obtaining it
         CheckoutProduct checkoutProduct = getCheckoutProduct(checkout,getProduct);
 
         //Method modifies the quanitty of the product
@@ -123,131 +143,151 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     @Override
-    public void deleteCheckoutProduct(String productName)
+    public void deleteCheckoutProduct(String email,String productName)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
+        //Validates that the product exist before obtaining it
         Product getProduct = getProduct(productName);
 
         //Trying to find a checkout product
         CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
+        //If it doesnt find it then will throw an exception
         if (checkoutProduct ==  null)
         {
-            throw new ResourceNotFoundException("We could not find a product checkout with the given information");
+            throw new ResourceNotFoundException("We could not find this product in the checkout with the given information");
         }
 
-        checkoutProductRepository.delete(checkoutProduct);
+        // Erase the product
+        checkoutProductDeletion(checkoutProduct);
 
+        //If there is no more products on this checkout then delete it
         deleteCheckoutNoProducts(checkout);
     }
 
+
     @Override
-    public void deleteCheckout()
+    public void deleteCheckout(String email)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
+
         checkoutProductRepository.deleteAllByCheckout(checkout);
         checkoutRepository.delete(checkout);
     }
 
     @Override
-    public void changeCheckoutAddress (long id)
+    public void changeCheckoutAddress (String email,long id)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
 
+        //Find an address based on the user and the id of the address
         Address address = addressRepository.findByUserAndId(user,id);
 
+        //If it doesn't find it throw an exception
         if (address == null)
         {
             throw new ResourceNotFoundException("We could not find an address with this id in this user");
         }
 
+        //set the address of the checkout
         checkout.setAddress(address);
+        //saves the modification to the database
         checkoutRepository.save(checkout);
     }
 
     @Override
-    public void changeCheckoutPaymentMethod (long id)
+    public void changeCheckoutPaymentMethod (String email,long id)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
 
+        //Find a payment method based on the user and the id
         PaymentMethod paymentMethod = paymentMethodRepository.findByUserAndId(user,id);
 
+        //If it doesn't find one throw an exception
         if (paymentMethod == null)
         {
             throw new ResourceNotFoundException("We could not find a payment method with this id in this user");
         }
 
+        //Sets the payment method of the checkout
         checkout.setPaymentMethod(paymentMethod);
+        //saves the modification to the database
         checkoutRepository.save(checkout);
     }
 
     @Override
-    public List<CheckoutUserAddressDTO> getAllAddresses()
+    public List<CheckoutUserAddressDTO> getAllAddresses(String email)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Find all the addresses related to the user
         List<Address> getAddresses = addressRepository.findAllByUser(user);
         if (getAddresses.isEmpty())
         {
             throw new ResourceNotFoundException("There are no addresses in this user, try to create one");
         }
 
-        List<CheckoutUserAddressDTO> addressDTO = new ArrayList<>();
-
-        for (Address address: getAddresses)
-        {
-            CheckoutUserAddressDTO element = AddressMapper.INSTANCE.addressToCheckoutUserAddressDTO(address);
-            addressDTO.add(element);
-        }
-
-        return addressDTO;
+        return AddressMapper.INSTANCE.addressToCheckoutUserAddressDTO(getAddresses);
     }
 
     @Override
-    public void createAddress(CreateAddressDTO createAddressDTO)
+    public void createAddress(String email,CreateAddressDTO createAddressDTO)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Mapping the dto to an address
         Address createAddress = AddressMapper.INSTANCE.createAddressDTOToAddress(createAddressDTO);
         createAddress.setUser(user);
+        //saving the address
         addressRepository.save(createAddress);
     }
 
     @Override
-    public List<PaymentMethodDTO> getAllPaymentMethods()
+    public List<PaymentMethodDTO> getAllPaymentMethods(String email)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Find all the payment method related to the user
         List<PaymentMethod> getPaymentMethods = paymentMethodRepository.findAllByUser(user);
         if (getPaymentMethods.isEmpty())
         {
             throw new ResourceNotFoundException("There are no payment methods in this user, try to create one");
         }
-        List<PaymentMethodDTO> paymentMethodDTO = new ArrayList<>();
 
-        for (PaymentMethod paymentMethod: getPaymentMethods)
-        {
-            PaymentMethodDTO element = PaymentMethodMapper.INSTANCE.paymentMethodToPaymentMethodDTO(paymentMethod);
-            paymentMethodDTO.add(element);
-        }
-
-        return paymentMethodDTO;
+        return PaymentMethodMapper.INSTANCE.paymentMethodToPaymentMethodDTO(getPaymentMethods);
     }
 
     @Override
-    public void createPaymentMethod(CreatePaymentMethodDTO createPaymentMethodDTO)
+    public void createPaymentMethod(String email,CreatePaymentMethodDTO createPaymentMethodDTO)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Mapping the dto to a payment method
         PaymentMethod createPaymentMethod = PaymentMethodMapper.INSTANCE.createPaymentMethodDTOToPaymentMethod(createPaymentMethodDTO);
         createPaymentMethod.setUser(user);
+        //saving the payment method
         paymentMethodRepository.save(createPaymentMethod);
     }
 
     @Override
-    public void generateOrder()
+    public void generateOrder(String email)
     {
-        User user = getUser(1L);
+        //Get the specific user, its checkout and the product that is needed
+        User user = getUser(email);
+        //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
+        //Verify if the address and payment of the checkout are not null
         mandatoryCheckoutElementsValidation(checkout);
         //Generate basic order
         Orders order = createOrderBasedOnCheckout(checkout);
@@ -256,16 +296,17 @@ public class CheckoutServiceImplementation implements CheckoutService {
         double total = createOrderProductsCalculateTotal(checkout,order);
         order.setTotal(total);
 
-        //Generate transaction
+        //Generate transaction based on the order created
         Transaction transaction = generateTransaction(order);
         order.setTransaction(transaction);
 
         //Remove founds from payment method
-        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
+        setPaymentMethodFounds(order,transaction);
 
         //Saving the order with all the elements and deleting the checkout
         orderRepository.save(order);
-        deleteCheckout();
+        // deletes the checkout after the order is completed
+        deleteCheckout(email);
     }
 
 
@@ -282,23 +323,32 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.save(checkoutProduct);
     }
 
+    //Deletes the product of the checkout when the quantity reaches zero
     private void deleteCheckoutProductWhenQuantityZero(CheckoutProduct checkoutProduct)
     {
         if (checkoutProduct.getQuantity() <= 0)
         {
-            checkoutProductRepository.delete(checkoutProduct);
+            checkoutProductDeletion(checkoutProduct);
         }
     }
 
+    //Method used to delete a checkout product
+    private void checkoutProductDeletion(CheckoutProduct checkoutProduct)
+    {
+        checkoutProduct.getCheckout().getCheckoutProducts().remove(checkoutProduct);
+        checkoutProductRepository.delete(checkoutProduct);
+    }
+
+    //Deletes the checkout if it doesn't have any more products
     private void deleteCheckoutNoProducts(Checkout checkout)
     {
-        if (checkout.getCheckoutProducts().size() <= 1)
+        if (checkout.getCheckoutProducts().isEmpty())
         {
             checkoutRepository.delete(checkout);
         }
     }
 
-    //Method used to create a checkout product
+    //Method used to create a checkout product and validates that the quantity is less than stock of product
     private void createCheckoutProduct(Product product,int quantity, Checkout checkout)
     {
         CheckoutProduct checkoutProduct = CheckoutProduct.builder()
@@ -314,6 +364,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.save(checkoutProduct);
     }
 
+    //Calculates the subtotal of the current state of the checkout
     private double calculateCheckoutSubtotal(Checkout checkout)
     {
         double subTotal = 0;
@@ -326,6 +377,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return subTotal;
     }
 
+    //Create the order products based on the checkout products, removes stock from products and returns total
     private double createOrderProductsCalculateTotal(Checkout checkout, Orders order)
     {
         double total = 0;
@@ -345,6 +397,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return total;
     }
 
+    //Removes stock from products after the order is generated
     private void discountStockFromProducts(OrderProduct orderProduct)
     {
         //Eliminating stocks from product
@@ -352,6 +405,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         productRepository.save(orderProduct.getProduct());
     }
 
+    //Creates the transaction based on the order
     private Transaction generateTransaction (Orders order)
     {
         //Generate Transaction
@@ -362,6 +416,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return transactionRepository.save(transaction);
     }
 
+    //Creates an order based on the user checkout
     private Orders createOrderBasedOnCheckout (Checkout checkout)
     {
         Orders createOrder = CheckoutOrderMapper.INSTANCE.checkoutToOrder(checkout);
@@ -375,6 +430,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return orderRepository.save(createOrder);
     }
 
+    //Validates that the address and the payment are not null when generating the order
     private void mandatoryCheckoutElementsValidation(Checkout checkout)
     {
         if (checkout.getAddress() == null)
@@ -387,19 +443,40 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
     }
 
+    //Creates the checkout based on the user
+    private Checkout createCheckoutBasedOnUser (User user)
+    {
+        //Creates the Checkout with user information
+        return Checkout.builder()
+                .user(user)
+                .address(user.getAddress().isEmpty() ? null : user.getAddress().get(0))
+                .paymentMethod(user.getPaymentMethods().isEmpty() ? null : user.getPaymentMethods().get(0))
+                .build();
+    }
+
+    //Remove founds when generating the order, if there are not enough founds then throw exception
+    private void setPaymentMethodFounds(Orders order, Transaction transaction)
+    {
+        if (transaction.getQuantity() > order.getPaymentMethod().getFounds())
+        {
+            throw new NotEnoughFoundsException("Not enough founds on your payment method");
+        }
+        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
+    }
+
 
 
 
 
     ////Validates the Objects we recieve
-    private User getUser (long id)
+    private User getUser (String email)
     {
-        Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent())
+        User user = userRepository.findByEmail(email);
+        if (user == null)
         {
             throw new ResourceNotFoundException("We could not find a user with the given id");
         }
-        return user.get();
+        return user;
     }
 
     private Product getProduct (String name)

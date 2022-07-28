@@ -11,6 +11,8 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 @Component
 public interface CheckoutMapper {
@@ -26,5 +28,6 @@ public interface CheckoutMapper {
     @Mapping(target = "price", source = "product.price")
     @Mapping(target = "quantity", source = "checkoutProduct.quantity")
     ProductCheckoutDTO checkoutProductAndProductToProductCheckoutDTO (CheckoutProduct checkoutProduct, Product product);
+
 }
 

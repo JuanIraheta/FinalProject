@@ -22,15 +22,8 @@ public class ProductServiceImplementation implements ProductService {
     @Override
     public List<ProductDTO> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        List<ProductDTO> productDTOS = new ArrayList<>();
 
-        for (Product product: products)
-        {
-            ProductDTO dto = ProductsMapper.INSTANCE.productToProductDTO(product);
-            productDTOS.add(dto);
-        }
-
-        return productDTOS;
+        return ProductsMapper.INSTANCE.productsToProductDTOS(products);
     }
 
     @Override

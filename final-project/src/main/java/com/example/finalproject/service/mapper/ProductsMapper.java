@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 @Component
 public interface ProductsMapper {
@@ -13,4 +15,6 @@ public interface ProductsMapper {
     ProductsMapper INSTANCE = Mappers.getMapper(ProductsMapper.class);
 
     ProductDTO productToProductDTO (Product product);
+
+    List<ProductDTO> productsToProductDTOS (List<Product> products);
 }
