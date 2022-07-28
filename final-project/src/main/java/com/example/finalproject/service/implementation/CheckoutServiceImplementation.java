@@ -318,7 +318,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
     {
         if (quantity > stock)
         {
-            throw new NotEnoughStockException("Not enough items on stock");
+            throw new NotEnoughStockException("Not enough "+ checkoutProduct.getProduct().getName() +
+                    " on stock - current stock: " + checkoutProduct.getProduct().getStock());
         }
         checkoutProduct.setQuantity(quantity);
         checkoutProductRepository.save(checkoutProduct);
@@ -359,7 +360,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
                 .build();
         if (checkoutProduct.getQuantity() > product.getStock())
         {
-            throw new NotEnoughStockException("Not enough items on stock");
+            throw new NotEnoughStockException("Not enough "+ product.getName() + " on stock - current stock: " + product.getStock());
         }
 
         checkoutProductRepository.save(checkoutProduct);
@@ -385,7 +386,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
         // Generate Order Products
         for (int i= 0; i < checkout.getCheckoutProducts().size();i++)
         {
-            OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
+            OrderProduct orderProduct = CheckoutOrderMapper.INSTANCE.
+                    checkoutProductToOrderProduct(checkout.getCheckoutProducts().get(i));
             orderProduct.setOrder(order);
 
             discountStockFromProducts(orderProduct);
@@ -402,6 +404,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private void discountStockFromProducts(OrderProduct orderProduct)
     {
         //Eliminating stocks from product
+        if(orderProduct.getQuantity() > orderProduct.getProduct().getStock())
+        {
+            throw new NotEnoughStockException("Not enough "+ orderProduct.getProduct().getName() +
+                    " on stock - current stock: " + orderProduct.getProduct().getStock());
+        }
         orderProduct.getProduct().setStock(orderProduct.getProduct().getStock() - orderProduct.getQuantity());
         productRepository.save(orderProduct.getProduct());
     }
