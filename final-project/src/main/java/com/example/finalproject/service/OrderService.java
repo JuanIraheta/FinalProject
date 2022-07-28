@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    List<OrderDTO> getAllOrders();
+    List<OrderDTO> getAllOrders(String email);
 
-    OrderDTO getOrder(long id);
+    OrderDTO getOrder(String email,long id);
 }

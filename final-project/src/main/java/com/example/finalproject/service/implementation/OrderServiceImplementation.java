@@ -27,10 +27,10 @@ public class OrderServiceImplementation implements OrderService {
     private final UserRepository userRepository;
 
     @Override
-    public List<OrderDTO> getAllOrders()
+    public List<OrderDTO> getAllOrders(String email)
     {
         //Get the valid user from database
-        User user = getUser(1L);
+        User user = getUser(email);
         //Find a list of orders from the user
         List<Orders> orders = orderRepository.findAllByUser(user);
         if (orders.isEmpty())
@@ -55,10 +55,10 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrder(long id)
+    public OrderDTO getOrder(String email, long id)
     {
         //getting a valid user
-        User user = getUser(1L);
+        User user = getUser(email);
         //getting the specific order from the user and the id
         Orders order = orderRepository.findByUserAndId(user,id);
         if (order == null)
@@ -90,14 +90,11 @@ public class OrderServiceImplementation implements OrderService {
 
 
     //get an specific user from the database
-    private User getUser (long id)
-    {
-        Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent())
-        {
+    private User getUser (String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
             throw new ResourceNotFoundException("We could not find a user with the given id");
         }
-        return user.get();
+        return user;
     }
-
 }
