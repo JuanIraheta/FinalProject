@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -79,7 +80,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         for (int i= 0; i < checkoutDTO.getProducts().size();i++)
         {
             //Obtains the specific product and validates its existence
-            Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getProductName());
+            Product getProduct = getProduct(checkoutDTO.getProducts().get(i).getId());
             //Validates if there is enough stock and creates the checkout product
             createCheckoutProduct(getProduct,checkoutDTO.getProducts().get(i).getQuantity(),savedCheckout);
         }
@@ -101,7 +102,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
 
         //Obtaining the specific product
-        Product getProduct = getProduct(checkoutProductDTO.getProductName());
+        Product getProduct = getProduct(checkoutProductDTO.getId());
 
         //Trying to find a checkout product with this product
         CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
@@ -119,14 +120,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     @Override
-    public void modifyCheckoutProductQuantity(String email,String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO)
+    public void modifyCheckoutProductQuantity(String email,long productID, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
         User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
         //Validates that the product exist before obtaining it
-        Product getProduct = getProduct(productName);
+        Product getProduct = getProduct(productID);
 
         //Validates that the checkout product exist before obtaining it
         CheckoutProduct checkoutProduct = getCheckoutProduct(checkout,getProduct);
@@ -143,14 +144,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     @Override
-    public void deleteCheckoutProduct(String email,String productName)
+    public void deleteCheckoutProduct(String email,long productId)
     {
         //Get the specific user, its checkout and the product that is needed
         User user = getUser(email);
         //Validates the checkout before obtaining it by user
         Checkout checkout = getCheckout(user);
         //Validates that the product exist before obtaining it
-        Product getProduct = getProduct(productName);
+        Product getProduct = getProduct(productId);
 
         //Trying to find a checkout product
         CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,getProduct);
@@ -479,14 +480,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return user;
     }
 
-    private Product getProduct (String name)
+    private Product getProduct (long id)
     {
-        Product getProduct = productRepository.findByName(name);
-        if (getProduct == null)
+        Optional<Product> getProduct = productRepository.findById(id);
+        if (!getProduct.isPresent())
         {
             throw new ResourceNotFoundException("We could not find a product with the given name");
         }
-        return getProduct;
+        return getProduct.get();
     }
 
     private Checkout getCheckout (User user)

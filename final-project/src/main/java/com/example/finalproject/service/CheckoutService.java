@@ -11,9 +11,9 @@ public interface CheckoutService {
 
     void addProductToCheckout(String email,CheckoutProductDTO checkoutProductDTO);
 
-    void modifyCheckoutProductQuantity(String email,String productName, UpdateCheckoutProductDTO updateCheckoutProductDTO);
+    void modifyCheckoutProductQuantity(String email,long productId, UpdateCheckoutProductDTO updateCheckoutProductDTO);
 
-    void deleteCheckoutProduct(String email,String productName);
+    void deleteCheckoutProduct(String email,long productID);
 
     void deleteCheckout(String email);
 
