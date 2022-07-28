@@ -1,18 +1,14 @@
 package com.example.finalproject.web.controllers;
 
 import com.example.finalproject.service.implementation.UserServiceImplementation;
-import com.example.finalproject.web.DTO.CheckoutProductDTO;
-import com.example.finalproject.web.DTO.UserDTO;
+import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -44,6 +40,32 @@ public class UserController {
         }
         String email = principal.getClaims().get("email").toString();
         return new ResponseEntity<>(email, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/API/users/addresses")
+    public List<CheckoutUserAddressDTO> getAllUserAddresses(@AuthenticationPrincipal Jwt principal)
+    {
+        return userServiceImplementation.getAllAddresses(getEmailByPrincipal(principal));
+    }
+
+    @PostMapping(value = "/API/users/addresses")
+    public ResponseEntity<String> createAddress (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreateAddressDTO createAddressDTO)
+    {
+        userServiceImplementation.createAddress(getEmailByPrincipal(principal),createAddressDTO);
+        return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/API/users/payments")
+    public List<PaymentMethodDTO> getAllUserPaymentMethods(@AuthenticationPrincipal Jwt principal)
+    {
+        return userServiceImplementation.getAllPaymentMethods(getEmailByPrincipal(principal));
+    }
+
+    @PostMapping(value = "/API/users/payments")
+    public ResponseEntity<String> createPaymentMethod (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreatePaymentMethodDTO createPaymentMethodDTO)
+    {
+        userServiceImplementation.createPaymentMethod(getEmailByPrincipal(principal),createPaymentMethodDTO);
+        return new ResponseEntity<>("Payment Method Added Successfully", HttpStatus.OK);
     }
 
     private String getEmailByPrincipal (Jwt principal)

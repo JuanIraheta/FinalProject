@@ -40,14 +40,14 @@ public class CheckoutController {
     }
 
     @PutMapping(value = "/API/users/checkouts/products/{id}")
-    public ResponseEntity<String> modifyCheckoutProductQuantity (@AuthenticationPrincipal Jwt principal,@PathVariable String id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
+    public ResponseEntity<String> modifyCheckoutProductQuantity (@AuthenticationPrincipal Jwt principal,@PathVariable long id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.modifyCheckoutProductQuantity(getEmailByPrincipal(principal),id,checkoutProductDTO);
         return new ResponseEntity<>("Product quantity modified successfully", HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/API/users/checkouts/products/{id}")
-    public ResponseEntity<String> deleteCheckoutProduct(@AuthenticationPrincipal Jwt principal,@PathVariable String id)
+    public ResponseEntity<String> deleteCheckoutProduct(@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
         checkoutServiceImplementation.deleteCheckoutProduct(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Product Deleted Successfully",HttpStatus.OK);
@@ -60,44 +60,18 @@ public class CheckoutController {
         return new ResponseEntity<>("Checkout Deleted Successfully",HttpStatus.OK);
     }
 
-    @PutMapping(value = "API/users/checkouts/addresses")
-    public ResponseEntity<String> changeCheckoutAddress (@AuthenticationPrincipal Jwt principal,@RequestParam long addressID)
+    @PutMapping(value = "API/users/checkouts/addresses/{id}")
+    public ResponseEntity<String> changeCheckoutAddress (@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
-        checkoutServiceImplementation.changeCheckoutAddress(getEmailByPrincipal(principal),addressID);
+        checkoutServiceImplementation.changeCheckoutAddress(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Address Changed Successfully", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/API/users/checkouts/addresses")
-    public List<CheckoutUserAddressDTO> getAllUserAddresses(@AuthenticationPrincipal Jwt principal)
+    @PutMapping(value = "API/users/checkouts/payments/{id}")
+    public ResponseEntity<String> changeCheckoutPaymentMethod (@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
-        return checkoutServiceImplementation.getAllAddresses(getEmailByPrincipal(principal));
-    }
-
-    @PostMapping(value = "/API/users/checkouts/addresses")
-    public ResponseEntity<String> createAddress (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreateAddressDTO createAddressDTO)
-    {
-        checkoutServiceImplementation.createAddress(getEmailByPrincipal(principal),createAddressDTO);
-        return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
-    }
-
-    @PutMapping(value = "API/users/checkouts/payments")
-    public ResponseEntity<String> changeCheckoutPaymentMethod (@AuthenticationPrincipal Jwt principal,@RequestParam long paymentID)
-    {
-        checkoutServiceImplementation.changeCheckoutPaymentMethod(getEmailByPrincipal(principal),paymentID);
+        checkoutServiceImplementation.changeCheckoutPaymentMethod(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Payment Method Changed Successfully", HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/API/users/checkouts/payments")
-    public List<PaymentMethodDTO> getAllUserPaymentMethods(@AuthenticationPrincipal Jwt principal)
-    {
-        return checkoutServiceImplementation.getAllPaymentMethods(getEmailByPrincipal(principal));
-    }
-
-    @PostMapping(value = "/API/users/checkouts/payments")
-    public ResponseEntity<String> createPaymentMethod (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreatePaymentMethodDTO createPaymentMethodDTO)
-    {
-        checkoutServiceImplementation.createPaymentMethod(getEmailByPrincipal(principal),createPaymentMethodDTO);
-        return new ResponseEntity<>("Payment Method Added Successfully", HttpStatus.OK);
     }
 
     @PostMapping(value = "/API/users/checkouts/purchases")

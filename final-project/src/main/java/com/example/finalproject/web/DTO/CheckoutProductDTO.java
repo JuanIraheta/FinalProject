@@ -15,8 +15,8 @@ import javax.validation.constraints.PositiveOrZero;
 public class CheckoutProductDTO {
 //DTO used for creating a checkout product
 
-    @NotEmpty(message = "Product name is mandatory")
-    private String productName;
+    @NotNull(message = "Product id is mandatory")
+    private long id;
 
     @NotNull(message = "Quantity is mandatory")
     @Positive(message = "Quantity must be a positive value")
