@@ -20,10 +20,10 @@ public class ProductsController {
     {
         return productServiceImplementation.getAllProducts();
     }
-    @GetMapping(value = "/API/products/{name}")
-    public ProductDTO getProduct(@PathVariable String name)
+    @GetMapping(value = "/API/products/{id}")
+    public ProductDTO getProduct(@PathVariable long id)
     {
-        return productServiceImplementation.getProduct(name);
+        return productServiceImplementation.getProduct(id);
     }
 
 }

@@ -8,5 +8,5 @@ public interface ProductService {
 
     List<ProductDTO> getAllProducts();
 
-    ProductDTO getProduct(String name);
+    ProductDTO getProduct(long id);
 }
