@@ -40,6 +40,11 @@ public class SecurityConfig {
     {
         http
                 .authorizeRequests()
+                .antMatchers("/actuator/health").permitAll()
+                .antMatchers("/actuator/loggers").fullyAuthenticated()
+                .antMatchers("/actuator/metrics").fullyAuthenticated()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .and()
                 .authorizeRequests()
