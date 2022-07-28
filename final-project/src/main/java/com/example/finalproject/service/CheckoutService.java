@@ -21,13 +21,7 @@ public interface CheckoutService {
 
     void changeCheckoutPaymentMethod (String email,long id);
 
-    List<CheckoutUserAddressDTO> getAllAddresses(String email);
 
-    void createAddress(String email,CreateAddressDTO createAddressDTO);
-
-    List<PaymentMethodDTO> getAllPaymentMethods(String email);
-
-    void createPaymentMethod(String email,CreatePaymentMethodDTO createPaymentMethodDTO);
 
     void generateOrder(String email);
 

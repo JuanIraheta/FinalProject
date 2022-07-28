@@ -67,37 +67,11 @@ public class CheckoutController {
         return new ResponseEntity<>("Address Changed Successfully", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/API/users/checkouts/addresses")
-    public List<CheckoutUserAddressDTO> getAllUserAddresses(@AuthenticationPrincipal Jwt principal)
-    {
-        return checkoutServiceImplementation.getAllAddresses(getEmailByPrincipal(principal));
-    }
-
-    @PostMapping(value = "/API/users/checkouts/addresses")
-    public ResponseEntity<String> createAddress (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreateAddressDTO createAddressDTO)
-    {
-        checkoutServiceImplementation.createAddress(getEmailByPrincipal(principal),createAddressDTO);
-        return new ResponseEntity<>("Address Added Successfully", HttpStatus.OK);
-    }
-
     @PutMapping(value = "API/users/checkouts/payments/{id}")
     public ResponseEntity<String> changeCheckoutPaymentMethod (@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
         checkoutServiceImplementation.changeCheckoutPaymentMethod(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Payment Method Changed Successfully", HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/API/users/checkouts/payments")
-    public List<PaymentMethodDTO> getAllUserPaymentMethods(@AuthenticationPrincipal Jwt principal)
-    {
-        return checkoutServiceImplementation.getAllPaymentMethods(getEmailByPrincipal(principal));
-    }
-
-    @PostMapping(value = "/API/users/checkouts/payments")
-    public ResponseEntity<String> createPaymentMethod (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreatePaymentMethodDTO createPaymentMethodDTO)
-    {
-        checkoutServiceImplementation.createPaymentMethod(getEmailByPrincipal(principal),createPaymentMethodDTO);
-        return new ResponseEntity<>("Payment Method Added Successfully", HttpStatus.OK);
     }
 
     @PostMapping(value = "/API/users/checkouts/purchases")
