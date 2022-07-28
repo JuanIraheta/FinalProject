@@ -417,9 +417,8 @@ public class CheckoutServiceImplementation implements CheckoutService {
             throw new NotEnoughFoundsException("Not enough founds on your payment method");
         }
         order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
+        paymentMethodRepository.save(order.getPaymentMethod());
     }
-
-
 
 
 
