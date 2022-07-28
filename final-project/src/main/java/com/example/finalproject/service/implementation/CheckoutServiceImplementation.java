@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -132,13 +131,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
         //Validates that the checkout product exist before obtaining it
         CheckoutProduct checkoutProduct = getCheckoutProduct(checkout,getProduct);
 
-        //Method that sets the quantity of the product checkout
+        //Method modifies the quanitty of the product
         setCheckoutProductQuantity(checkoutProduct, checkoutProduct.getQuantity() +
                 updateCheckoutProductDTO.getQuantity(), getProduct.getStock());
 
-        //Delete product form checkout when quantity is zero
+        //Delete the product from checkout if quantity is zero
         deleteCheckoutProductWhenQuantityZero(checkoutProduct);
-        checkoutRepository.save(checkout);
         //Delete Checkout when there are no products
         deleteCheckoutNoProducts(checkout);
     }
@@ -163,11 +161,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
 
         // Erase the product
-        checkoutProductRepository.delete(checkoutProduct);
+        checkoutProductDeletion(checkoutProduct);
 
         //If there is no more products on this checkout then delete it
         deleteCheckoutNoProducts(checkout);
     }
+
 
     @Override
     public void deleteCheckout(String email)
@@ -329,14 +328,21 @@ public class CheckoutServiceImplementation implements CheckoutService {
     {
         if (checkoutProduct.getQuantity() <= 0)
         {
-            checkoutProductRepository.delete(checkoutProduct);
+            checkoutProductDeletion(checkoutProduct);
         }
+    }
+
+    //Method used to delete a checkout product
+    private void checkoutProductDeletion(CheckoutProduct checkoutProduct)
+    {
+        checkoutProduct.getCheckout().getCheckoutProducts().remove(checkoutProduct);
+        checkoutProductRepository.delete(checkoutProduct);
     }
 
     //Deletes the checkout if it doesn't have any more products
     private void deleteCheckoutNoProducts(Checkout checkout)
     {
-        if (checkout.getCheckoutProducts().size() <= 1)
+        if (checkout.getCheckoutProducts().isEmpty())
         {
             checkoutRepository.delete(checkout);
         }
