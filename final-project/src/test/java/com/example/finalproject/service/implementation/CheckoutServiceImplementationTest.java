@@ -8,10 +8,7 @@ import com.example.finalproject.persistence.model.CheckoutProduct;
 import com.example.finalproject.persistence.model.Product;
 import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.persistence.repository.*;
-import com.example.finalproject.web.DTO.CheckoutDTO;
-import com.example.finalproject.web.DTO.CheckoutProductDTO;
-import com.example.finalproject.web.DTO.CreateCheckoutDTO;
-import com.example.finalproject.web.DTO.CreateCheckoutProductDTO;
+import com.example.finalproject.web.DTO.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -345,6 +342,166 @@ class CheckoutServiceImplementationTest {
             when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(checkoutProduct);
             assertThrows(NotEnoughStockException.class,() ->
                     checkoutServiceImplementation.addProductToCheckout("email@test.com",createCheckoutProductDTO));
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(user);
+            verify(productRepository).findById(any());
+            verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("modifyCheckoutProductQuantity")
+    class modifyCheckoutProductQuantity {
+        @Test
+        @DisplayName("modifyCheckoutProductQuantity When ValidUpdateCheckoutDTO Add Product Quantity")
+        void modifyCheckoutProductQuantity_ValidUpdateCheckoutDTO_AddProductQuantity()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            Product product = objectCreator.createProduct();
+            Optional<Product> optionalProduct = Optional.of(product);
+            CheckoutProduct checkoutProduct = objectCreator.createCheckoutProduct();
+            UpdateCheckoutProductDTO updateCheckoutProductDTO = objectCreator.createUpdateCheckoutProductDTO(1);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+            when(productRepository.findById(any())).thenReturn(optionalProduct);
+            when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(checkoutProduct);
+
+            checkoutServiceImplementation.modifyCheckoutProductQuantity("test@test.com",1L,updateCheckoutProductDTO);
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(user);
+            verify(productRepository).findById(any());
+            verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+
+        }
+
+        @Test
+        @DisplayName("modifyCheckoutProductQuantity When ValidUpdateCheckoutDTO Add Product Quantity Product")
+        void modifyCheckoutProductQuantity_ValidUpdateCheckoutDTO_RemoveProductQuantityAndProduct()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            Product product = objectCreator.createProduct();
+            Optional<Product> optionalProduct = Optional.of(product);
+            CheckoutProduct checkoutProduct = objectCreator.createCheckoutProduct();
+            checkoutProduct.setCheckout(checkout);
+            UpdateCheckoutProductDTO updateCheckoutProductDTO = objectCreator.createUpdateCheckoutProductDTO(-1);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+            when(productRepository.findById(any())).thenReturn(optionalProduct);
+            when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(checkoutProduct);
+
+
+            checkoutServiceImplementation.modifyCheckoutProductQuantity("test@test.com",1L,updateCheckoutProductDTO);
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(user);
+            verify(productRepository).findById(any());
+            verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+
+        }
+
+        @Test
+        @DisplayName("modifyCheckoutProductQuantity When no checkout product Add Throw Exception")
+        void modifyCheckoutProductQuantity_NoCheckoutProduct_ThrowException()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            Product product = objectCreator.createProduct();
+            Optional<Product> optionalProduct = Optional.of(product);
+            UpdateCheckoutProductDTO updateCheckoutProductDTO = objectCreator.createUpdateCheckoutProductDTO(1);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+            when(productRepository.findById(any())).thenReturn(optionalProduct);
+            when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(null);
+
+            assertThrows(ResourceNotFoundException.class,() ->
+                    checkoutServiceImplementation.modifyCheckoutProductQuantity("test@test.com",1L,updateCheckoutProductDTO));
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(user);
+            verify(productRepository).findById(any());
+            verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteCheckoutProduct")
+    class deleteCheckoutProduct {
+        @Test
+        @DisplayName("deleteCheckoutProduct When valid user and id Delete Checkout Product")
+        void deleteCheckoutProduct_ValidUserAndId_DeleteCheckoutProduct()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            Product product = objectCreator.createProduct();
+            Optional<Product> optionalProduct = Optional.of(product);
+            CheckoutProduct checkoutProduct = objectCreator.createCheckoutProduct();
+            checkoutProduct.setCheckout(checkout);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+            when(productRepository.findById(any())).thenReturn(optionalProduct);
+            when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(checkoutProduct);
+
+            checkoutServiceImplementation.deleteCheckoutProduct("test@test.com",1L);
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(user);
+            verify(productRepository).findById(any());
+            verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+        }
+
+        @Test
+        @DisplayName("deleteCheckoutProduct When valid user and id Delete Checkout Product")
+        void deleteCheckoutProduct_ValidUserAndId_DeleteCheckoutNoProducts()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            checkout.getCheckoutProducts().removeAll(checkout.getCheckoutProducts());
+            Product product = objectCreator.createProduct();
+            Optional<Product> optionalProduct = Optional.of(product);
+
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+            when(productRepository.findById(any())).thenReturn(optionalProduct);
+            when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(null);
+
+
+            assertThrows(ResourceNotFoundException.class,() ->
+                    checkoutServiceImplementation.deleteCheckoutProduct("test@test.com",1L));
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(user);
+            verify(productRepository).findById(any());
+            verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+        }
+
+        @Test
+        @DisplayName("deleteCheckoutProduct When invalid id Throw Exception")
+        void deleteCheckoutProduct_InvalidId_DeleteCheckoutNoProducts()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            checkout.getCheckoutProducts().removeAll(checkout.getCheckoutProducts());
+            Product product = objectCreator.createProduct();
+            Optional<Product> optionalProduct = Optional.of(product);
+            CheckoutProduct checkoutProduct = objectCreator.createCheckoutProduct();
+            checkoutProduct.setCheckout(checkout);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+            when(productRepository.findById(any())).thenReturn(optionalProduct);
+            when(checkoutProductRepository.findByCheckoutAndProduct(checkout,product)).thenReturn(checkoutProduct);
+            doNothing().when(checkoutRepository).delete(checkout);
+
+            checkoutServiceImplementation.deleteCheckoutProduct("test@test.com",1L);
 
             verify(userRepository).findByEmail(anyString());
             verify(checkoutRepository).findByUser(user);

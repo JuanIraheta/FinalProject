@@ -328,4 +328,11 @@ public class ObjectCreator {
                 .quantity(1)
                 .build();
     }
+
+    public UpdateCheckoutProductDTO createUpdateCheckoutProductDTO(int value)
+    {
+        return UpdateCheckoutProductDTO.builder()
+                .quantity(value)
+                .build();
+    }
 }
