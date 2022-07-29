@@ -4,12 +4,7 @@ import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.OrderRepository;
 import com.example.finalproject.persistence.repository.UserRepository;
-import com.example.finalproject.web.DTO.CreateAddressDTO;
 import com.example.finalproject.web.DTO.OrderDTO;
-import com.example.finalproject.web.DTO.OrderProductDTO;
-import com.example.finalproject.web.DTO.PaymentMethodNoIdDTO;
-import org.aspectj.weaver.ast.Or;
-import org.h2.command.ddl.CreateUser;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -33,10 +28,13 @@ class OrderServiceImplementationTest {
 
     private OrderServiceImplementation orderServiceImplementation;
 
+    private ObjectCreator objectCreator;
+
     @BeforeEach
     private void setUp ()
     {
         orderServiceImplementation = new OrderServiceImplementation(orderRepository,userRepository);
+        objectCreator = new ObjectCreator();
     }
 
 
@@ -47,9 +45,9 @@ class OrderServiceImplementationTest {
         @DisplayName("getOrder When valid email return valid OrderDTO")
         void getOrder_ValidUserEmail_GetOrderDTO()
         {
-            User user = createUser();
-            Orders order = createOrder();
-            OrderDTO orderDTO = createOrderDTO();
+            User user = objectCreator.createUser();
+            Orders order = objectCreator.createOrder();
+            OrderDTO orderDTO = objectCreator.createOrderDTO();
 
             when(orderRepository.findByUserAndId(any(),anyLong())).thenReturn(order);
             when(userRepository.findByEmail(any())).thenReturn(user);
@@ -84,7 +82,7 @@ class OrderServiceImplementationTest {
         @DisplayName("getOrder When invalid order id throw Exception")
         void getOrder_InValidOrderId_ThrowException()
         {
-            User user = createUser();
+            User user = objectCreator.createUser();
             when(userRepository.findByEmail(any())).thenReturn(user);
             when(orderRepository.findByUserAndId(any(),anyLong())).thenReturn(null);
 
@@ -103,11 +101,11 @@ class OrderServiceImplementationTest {
         @DisplayName("getAllOrders When valid email return valid OrderDTO")
         void getAllOrders_ValidUserEmail_GetListOrderDTO()
         {
-            User user = createUser();
-            Orders order = createOrder();
+            User user = objectCreator.createUser();
+            Orders order = objectCreator.createOrder();
             List<Orders> ordersList = new ArrayList<>();
             ordersList.add(order);
-            OrderDTO orderDTO = createOrderDTO();
+            OrderDTO orderDTO = objectCreator.createOrderDTO();
             List<OrderDTO> orderDTOList = new ArrayList<>();
             orderDTOList.add(orderDTO);
 
@@ -141,134 +139,18 @@ class OrderServiceImplementationTest {
         @DisplayName("getAllOrders When there are no orders throw Exception")
         void getAllOrders_NoOrders_ThrowException()
         {
-            User user = createUser();
+            User user = objectCreator.createUser();
             List<Orders> orders = new ArrayList<>();
             when(userRepository.findByEmail(any())).thenReturn(user);
-            when(orderRepository.findAllByUser(eq(user))).thenReturn(orders);
+            when(orderRepository.findAllByUser(user)).thenReturn(orders);
 
             assertThrows(ResourceNotFoundException.class,() ->
                     orderServiceImplementation.getAllOrders("email@test.com"));
 
             verify(userRepository).findByEmail(any());
-            verify(orderRepository).findAllByUser(eq(user));
+            verify(orderRepository).findAllByUser(user);
         }
     }
 
-
-    private User createUser ()
-    {
-        return User.builder()
-                .id(1L)
-                .email("irahetajuanjose@hotmail.com")
-                .userName("loading")
-                .firstName("Juan")
-                .lastName("Iraheta")
-                .phoneNumber("+503 7129 9991")
-                .build();
-
-    }
-
-    private Orders createOrder (){
-        return Orders.builder()
-                .id(1L)
-                .user(createUser())
-                .address(createAddress())
-                .paymentMethod(createPaymentMethod())
-                .orderProducts(createOrderProducts())
-                .total(1.00)
-                .build();
-    }
-
-    private List<OrderProduct> createOrderProducts()
-    {
-        List<OrderProduct> orderProducts = new ArrayList<>();
-        OrderProduct orderProduct = OrderProduct.builder()
-                .id(1L)
-                .product(createProduct())
-                .quantity(1)
-                .build();
-        orderProducts.add(orderProduct);
-        return orderProducts;
-    }
-
-    private Product createProduct ()
-    {
-        return Product.builder()
-                .id(1L)
-                .name("product")
-                .price(1.00)
-                .stock(1)
-                .build();
-    }
-
-    private PaymentMethod createPaymentMethod ()
-    {
-        return PaymentMethod.builder()
-                .id(1L)
-                .name("payment")
-                .user(createUser())
-                .paymentType("type")
-                .founds(100.00)
-                .build();
-    }
-
-    private Address createAddress()
-    {
-        return Address.builder()
-                .id(1L)
-                .houseNumber("house")
-                .street("street")
-                .city("city")
-                .state("state")
-                .build();
-    }
-
-    private CreateAddressDTO createAddressDTO()
-    {
-        return CreateAddressDTO.builder()
-                .houseNumber("house")
-                .street("street")
-                .city("city")
-                .state("state")
-                .build();
-    }
-
-    private OrderDTO createOrderDTO ()
-    {
-        return OrderDTO.builder()
-                .id(1L)
-                .firstName("Juan")
-                .lastName("Iraheta")
-                .address(createAddressDTO())
-                .orderProducts(createListOrderProductDTO())
-                .paymentMethod(createPaymentMethodNoIdDTO())
-                .total(1.00)
-                .delivered(false)
-                .build();
-    }
-
-    private List<OrderProductDTO> createListOrderProductDTO ()
-    {
-        List<OrderProductDTO> list = new ArrayList<>();
-        OrderProductDTO orderProductDTO = createOrderProductDTO();
-        list.add(orderProductDTO);
-        return list;
-    }
-    private OrderProductDTO createOrderProductDTO()
-    {
-        return OrderProductDTO.builder()
-                .name("product")
-                .price(1.00)
-                .quantity(1)
-                .build();
-    }
-
-    private PaymentMethodNoIdDTO createPaymentMethodNoIdDTO()
-    {
-        return PaymentMethodNoIdDTO.builder()
-                .paymentType("type")
-                .name("payment")
-                .build();
-    }
 
 }

@@ -49,7 +49,7 @@ class ProductServiceImplementationTest {
 
             when(productRepository.findById(anyLong())).thenReturn(optionalProduct);
 
-            ProductDTO getProductDTO = productServiceImplementation.getProduct(1l);
+            ProductDTO getProductDTO = productServiceImplementation.getProduct(1L);
 
             assertThat(getProductDTO,samePropertyValuesAs(productDTO));
 

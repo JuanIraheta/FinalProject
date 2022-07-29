@@ -1,9 +1,6 @@
 package com.example.finalproject.service.implementation;
 
-import com.example.finalproject.persistence.model.Address;
-import com.example.finalproject.persistence.model.PaymentMethod;
-import com.example.finalproject.persistence.model.Product;
-import com.example.finalproject.persistence.model.User;
+import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.web.DTO.*;
 
 import java.util.ArrayList;
@@ -42,7 +39,6 @@ public class ObjectCreator {
     }
 
     //ADDRESS
-
     public List<Address> createAddressList()
     {
         List<Address> addresses = new ArrayList<>();
@@ -68,6 +64,16 @@ public class ObjectCreator {
     }
 
     public CreateAddressDTO createCreateAddressDTO()
+    {
+        return CreateAddressDTO.builder()
+                .houseNumber("house")
+                .street("street")
+                .city("city")
+                .state("state")
+                .build();
+    }
+
+    private CreateAddressDTO createAddressDTO()
     {
         return CreateAddressDTO.builder()
                 .houseNumber("house")
@@ -170,6 +176,64 @@ public class ObjectCreator {
                 .name("product")
                 .stock(1)
                 .price(1.00)
+                .build();
+    }
+
+    //ORDER
+
+    public Orders createOrder ()
+    {
+        return Orders.builder()
+                .id(1L)
+                .user(createUser())
+                .address(createAddress())
+                .paymentMethod(createPaymentMethod())
+                .orderProducts(createOrderProducts())
+                .total(1.00)
+                .build();
+    }
+
+    public OrderDTO createOrderDTO ()
+    {
+        return OrderDTO.builder()
+                .id(1L)
+                .firstName("Juan")
+                .lastName("Iraheta")
+                .address(createAddressDTO())
+                .orderProducts(createListOrderProductDTO())
+                .paymentMethod(createPaymentMethodNoIdDTO())
+                .total(1.00)
+                .delivered(false)
+                .build();
+    }
+
+    //ORDER PRODUCT
+    public List<OrderProduct> createOrderProducts()
+    {
+        List<OrderProduct> orderProducts = new ArrayList<>();
+        OrderProduct orderProduct = OrderProduct.builder()
+                .id(1L)
+                .product(createProduct())
+                .quantity(1)
+                .build();
+        orderProducts.add(orderProduct);
+        return orderProducts;
+    }
+
+    public List<OrderProductDTO> createListOrderProductDTO ()
+    {
+        List<OrderProductDTO> list = new ArrayList<>();
+        OrderProductDTO orderProductDTO = createOrderProductDTO();
+        list.add(orderProductDTO);
+        return list;
+    }
+
+    public OrderProductDTO createOrderProductDTO()
+    {
+        return OrderProductDTO.builder()
+                .name("product")
+                .price(1.00)
+                .quantity(1)
                 .build();
     }
 }
