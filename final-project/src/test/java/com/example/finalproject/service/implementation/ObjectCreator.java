@@ -236,4 +236,60 @@ public class ObjectCreator {
                 .quantity(1)
                 .build();
     }
+
+    //Checkout
+    public Checkout createCheckout ()
+    {
+        return Checkout.builder()
+                .id(1L)
+                .user(createUser())
+                .checkoutProducts(createCheckoutProductList())
+                .address(createAddress())
+                .paymentMethod(createPaymentMethod())
+                .build();
+    }
+
+    public CheckoutDTO createCheckoutDTO()
+    {
+        return CheckoutDTO.builder()
+                .userName("tester")
+                .firstName("Juan")
+                .lastName("Iraheta")
+                .checkoutProducts(createProductCheckoutDTOList())
+                .address(createCreateAddressDTO())
+                .paymentMethod(createPaymentMethodNoIdDTO())
+                .subTotal(1.00)
+                .build();
+    }
+
+    //CHECKOUT PRODUCTS
+    public List<CheckoutProduct> createCheckoutProductList ()
+    {
+        List<CheckoutProduct> checkoutProductList = new ArrayList<>();
+        checkoutProductList.add(createCheckoutProduct());
+        return checkoutProductList;
+    }
+    public CheckoutProduct createCheckoutProduct ()
+    {
+        return CheckoutProduct.builder()
+                .id(1L)
+                .product(createProduct())
+                .quantity(1)
+                .build();
+    }
+
+    public List<ProductCheckoutDTO> createProductCheckoutDTOList()
+    {
+        List<ProductCheckoutDTO> productCheckoutDTOList = new ArrayList<>();
+        productCheckoutDTOList.add(createProductCheckoutDTO());
+        return productCheckoutDTOList;
+    }
+    public ProductCheckoutDTO createProductCheckoutDTO()
+    {
+        return ProductCheckoutDTO.builder()
+                .name("product")
+                .price(1.00)
+                .quantity(1)
+                .build();
+    }
 }
