@@ -3,10 +3,7 @@ package com.example.finalproject.service.implementation;
 import com.example.finalproject.exception.NotEnoughStockException;
 import com.example.finalproject.exception.ResourceAlreadyExistException;
 import com.example.finalproject.exception.ResourceNotFoundException;
-import com.example.finalproject.persistence.model.Checkout;
-import com.example.finalproject.persistence.model.CheckoutProduct;
-import com.example.finalproject.persistence.model.Product;
-import com.example.finalproject.persistence.model.User;
+import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.web.DTO.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,7 +61,7 @@ class CheckoutServiceImplementationTest {
 
     @Nested
     @DisplayName("getCheckout")
-    class getCheckout {
+    class GetCheckout {
         @Test
         @DisplayName("getCheckout When valid email return valid CheckoutDTO")
         void getCheckout_ValidUserEmail_GetCheckoutDTO()
@@ -116,7 +113,7 @@ class CheckoutServiceImplementationTest {
 
     @Nested
     @DisplayName("createCheckOut")
-    class createCheckOut {
+    class CreateCheckOut {
         @Test
         @DisplayName("createCheckOut When valid createCheckoutDTO create a checkout")
         void createCheckOut_ValidCreateCheckoutDTO_CreateCheckout()
@@ -239,7 +236,7 @@ class CheckoutServiceImplementationTest {
 
     @Nested
     @DisplayName("addProductToCheckout")
-    class addProductToCheckout {
+    class AddProductToCheckout {
         @Test
         @DisplayName("addProductToCheckout When CreateCheckoutProductDTO add a product to checkout")
         void addProductToCheckout_ValidCreateCheckoutProductDTO_AddProductToCheckout()
@@ -353,7 +350,7 @@ class CheckoutServiceImplementationTest {
 
     @Nested
     @DisplayName("modifyCheckoutProductQuantity")
-    class modifyCheckoutProductQuantity {
+    class ModifyCheckoutProductQuantity {
         @Test
         @DisplayName("modifyCheckoutProductQuantity When ValidUpdateCheckoutDTO Add Product Quantity")
         void modifyCheckoutProductQuantity_ValidUpdateCheckoutDTO_AddProductQuantity()
@@ -432,7 +429,7 @@ class CheckoutServiceImplementationTest {
 
     @Nested
     @DisplayName("deleteCheckoutProduct")
-    class deleteCheckoutProduct {
+    class DeleteCheckoutProduct {
         @Test
         @DisplayName("deleteCheckoutProduct When valid user and id Delete Checkout Product")
         void deleteCheckoutProduct_ValidUserAndId_DeleteCheckoutProduct()
@@ -507,6 +504,104 @@ class CheckoutServiceImplementationTest {
             verify(checkoutRepository).findByUser(user);
             verify(productRepository).findById(any());
             verify(checkoutProductRepository).findByCheckoutAndProduct(checkout,product);
+        }
+    }
+
+    @Test
+    @DisplayName("deleteCheckout When valid user Delete Checkout")
+    void deleteCheckout_ValidUser_DeleteCheckout()
+    {
+        User user = objectCreator.createUser();
+        Checkout checkout = objectCreator.createCheckout();
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(checkoutRepository.findByUser(user)).thenReturn(checkout);
+        doNothing().when(checkoutProductRepository).deleteAllByCheckout(checkout);
+        doNothing().when(checkoutRepository).delete(checkout);
+
+        checkoutServiceImplementation.deleteCheckout("test@test.com");
+    }
+
+    @Nested
+    @DisplayName("changeCheckoutAddress")
+    class ChangeCheckoutAddress {
+        @Test
+        @DisplayName("changeCheckoutAddress When valid Id Change Checkout Address")
+        void changeCheckoutAddress_ValidID_ChangeCheckoutAddress()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            Address address = objectCreator.createAddress();
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(addressRepository.findByUserAndId(any(),anyLong())).thenReturn(address);
+
+            checkoutServiceImplementation.changeCheckoutAddress("test@test.com", 1L);
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+            verify(addressRepository).findByUserAndId(any(),anyLong());
+        }
+
+        @Test
+        @DisplayName("changeCheckoutAddress When no address Throw Exception")
+        void changeCheckoutAddress_InvalidID_ThrowException()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(addressRepository.findByUserAndId(any(),anyLong())).thenReturn(null);
+
+            assertThrows(ResourceNotFoundException.class,() ->
+                    checkoutServiceImplementation.changeCheckoutAddress("test@test.com",1L));
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+            verify(addressRepository).findByUserAndId(any(),anyLong());
+        }
+    }
+
+    @Nested
+    @DisplayName("changeCheckoutPaymentMethod")
+    class ChangeCheckoutPaymentMethod {
+        @Test
+        @DisplayName("changeCheckoutAddress When valid Id Change Checkout Payment Method")
+        void changeCheckoutPaymentMethod_ValidID_ChangeCheckoutPaymentMethod()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            PaymentMethod paymentMethod = objectCreator.createPaymentMethod();
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(paymentMethodRepository.findByUserAndId(any(),anyLong())).thenReturn(paymentMethod);
+
+            checkoutServiceImplementation.changeCheckoutPaymentMethod("test@test.com", 1L);
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+            verify(paymentMethodRepository).findByUserAndId(any(),anyLong());
+        }
+
+        @Test
+        @DisplayName("changeCheckoutAddress When no payment method Throw Exception")
+        void changeCheckoutAddress_InvalidId_ThrowException()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(paymentMethodRepository.findByUserAndId(any(),anyLong())).thenReturn(null);
+
+            assertThrows(ResourceNotFoundException.class,() ->
+                    checkoutServiceImplementation.changeCheckoutPaymentMethod("test@test.com",1L));
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+            verify(paymentMethodRepository).findByUserAndId(any(),anyLong());
         }
     }
 }
