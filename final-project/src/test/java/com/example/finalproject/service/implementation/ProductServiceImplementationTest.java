@@ -2,11 +2,9 @@ package com.example.finalproject.service.implementation;
 
 import com.example.finalproject.exception.ResourceNotFoundException;
 import com.example.finalproject.persistence.model.Product;
-import com.example.finalproject.persistence.repository.OrderRepository;
 import com.example.finalproject.persistence.repository.ProductRepository;
 import com.example.finalproject.web.DTO.ProductDTO;
-import org.aspectj.weaver.ast.Or;
-import org.h2.command.ddl.CreateUser;
+
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,7 +17,6 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,10 +27,13 @@ class ProductServiceImplementationTest {
 
     private ProductServiceImplementation productServiceImplementation;
 
+    private ObjectCreator objectCreator;
+
     @BeforeEach
     private void setUp ()
     {
         productServiceImplementation = new ProductServiceImplementation(productRepository);
+        objectCreator = new ObjectCreator();
     }
 
     @Nested
@@ -43,9 +43,9 @@ class ProductServiceImplementationTest {
         @DisplayName("getProduct When valid id return valid ProductDTO")
         void getProduct_ValidID_GetProductDTO()
         {
-            Product product = createProduct();
+            Product product = objectCreator.createProduct();
             Optional<Product> optionalProduct = Optional.of(product);
-            ProductDTO productDTO = createProductDTO();
+            ProductDTO productDTO = objectCreator.createProductDTO();
 
             when(productRepository.findById(anyLong())).thenReturn(optionalProduct);
 
@@ -78,11 +78,11 @@ class ProductServiceImplementationTest {
         void getProduct_AvailableProducts_GetListProductDTO()
         {
             List<Product> productList = new ArrayList<>();
-            Product product = createProduct();
+            Product product = objectCreator.createProduct();
             productList.add(product);
 
             List<ProductDTO> productDTOList = new ArrayList<>();
-            ProductDTO productDTO = createProductDTO();
+            ProductDTO productDTO = objectCreator.createProductDTO();
             productDTOList.add(productDTO);
 
             when(productRepository.findAll()).thenReturn(productList);
@@ -108,24 +108,6 @@ class ProductServiceImplementationTest {
         }
     }
 
-    private Product createProduct()
-    {
-        return Product.builder()
-                .id(1L)
-                .name("product")
-                .stock(1)
-                .price(1.00)
-                .build();
-    }
 
-    private ProductDTO createProductDTO ()
-    {
-        return ProductDTO.builder()
-                .id(1L)
-                .name("product")
-                .stock(1)
-                .price(1.00)
-                .build();
-    }
 
 }

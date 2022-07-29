@@ -2,6 +2,7 @@ package com.example.finalproject.service.implementation;
 
 import com.example.finalproject.persistence.model.Address;
 import com.example.finalproject.persistence.model.PaymentMethod;
+import com.example.finalproject.persistence.model.Product;
 import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.web.DTO.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class ObjectCreator {
 
+    //USER
     public User createUser ()
     {
         return User.builder()
@@ -38,6 +40,8 @@ public class ObjectCreator {
 
 
     }
+
+    //ADDRESS
 
     public List<Address> createAddressList()
     {
@@ -91,6 +95,7 @@ public class ObjectCreator {
                 .build();
     }
 
+    //PAYMENT METHOD
     public List<PaymentMethod> createPaymentMethodList()
     {
         List<PaymentMethod> paymentMethods = new ArrayList<>();
@@ -144,6 +149,27 @@ public class ObjectCreator {
                 .id(1L)
                 .name("name")
                 .paymentType("type")
+                .build();
+    }
+
+    //PRODUCT OBJECTS
+    public Product createProduct()
+    {
+        return Product.builder()
+                .id(1L)
+                .name("product")
+                .stock(1)
+                .price(1.00)
+                .build();
+    }
+
+    public ProductDTO createProductDTO ()
+    {
+        return ProductDTO.builder()
+                .id(1L)
+                .name("product")
+                .stock(1)
+                .price(1.00)
                 .build();
     }
 }
