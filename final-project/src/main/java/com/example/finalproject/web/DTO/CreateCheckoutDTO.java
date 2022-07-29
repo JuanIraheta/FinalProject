@@ -17,10 +17,10 @@ public class CreateCheckoutDTO {
 
     @NotEmpty(message = "Add at least one product")
     @Valid
-    private List<CheckoutProductDTO> products;
+    private List<CreateCheckoutProductDTO> products;
 
     @JsonCreator
-    public CreateCheckoutDTO(List<CheckoutProductDTO> products) {
+    public CreateCheckoutDTO(List<CreateCheckoutProductDTO> products) {
         this.products = products;
     }
 

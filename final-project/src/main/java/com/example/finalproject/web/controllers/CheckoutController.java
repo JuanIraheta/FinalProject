@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class CheckoutController {
     }
 
     @PostMapping(value = "/API/users/checkouts/products")
-    public ResponseEntity<String> addProductToCheckout (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CheckoutProductDTO checkoutProductDTO)
+    public ResponseEntity<String> addProductToCheckout (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.addProductToCheckout(getEmailByPrincipal(principal),checkoutProductDTO);
         return new ResponseEntity<>("Product added successfully", HttpStatus.OK);

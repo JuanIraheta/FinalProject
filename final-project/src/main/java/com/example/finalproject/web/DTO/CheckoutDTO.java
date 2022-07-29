@@ -18,7 +18,7 @@ public class CheckoutDTO {
 
     private String lastName;
 
-    private List<ProductCheckoutDTO> checkoutProducts;
+    private List<CheckoutProductDTO> checkoutProducts;
 
     private CreateAddressDTO address;
 

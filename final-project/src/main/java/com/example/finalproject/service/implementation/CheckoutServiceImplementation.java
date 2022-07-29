@@ -4,10 +4,8 @@ import com.example.finalproject.exception.*;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.service.CheckoutService;
-import com.example.finalproject.service.mapper.AddressMapper;
 import com.example.finalproject.service.mapper.CheckoutMapper;
 import com.example.finalproject.service.mapper.CheckoutOrderMapper;
-import com.example.finalproject.service.mapper.PaymentMethodMapper;
 import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,15 +42,15 @@ public class CheckoutServiceImplementation implements CheckoutService {
         CheckoutDTO checkoutDTO = CheckoutMapper.INSTANCE.checkoutToCheckoutDTO(checkout);
 
         //Mapping each checkout product to its dto
-        List<ProductCheckoutDTO> productCheckoutDTO = new ArrayList<>();
+        List<CheckoutProductDTO> checkoutProductDTO = new ArrayList<>();
         for (CheckoutProduct checkoutProduct: checkout.getCheckoutProducts())
         {
-            ProductCheckoutDTO dto = CheckoutMapper.INSTANCE.checkoutProductAndProductToProductCheckoutDTO
+            CheckoutProductDTO dto = CheckoutMapper.INSTANCE.checkoutProductAndProductToProductCheckoutDTO
                     (checkoutProduct,checkoutProduct.getProduct());
-            productCheckoutDTO.add(dto);
+            checkoutProductDTO.add(dto);
         }
         //Setting the list of product dtos to the checkout dto
-        checkoutDTO.setCheckoutProducts(productCheckoutDTO);
+        checkoutDTO.setCheckoutProducts(checkoutProductDTO);
         //Calculates a subtotal and set it to the checkout dto
         checkoutDTO.setSubTotal(calculateCheckoutSubtotal(checkout));
         return checkoutDTO;
@@ -88,7 +86,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
     @Override
-    public void addProductToCheckout(String email,CheckoutProductDTO checkoutProductDTO)
+    public void addProductToCheckout(String email, CreateCheckoutProductDTO checkoutProductDTO)
     {
         //Get the specific user, its checkout and the product that is needed
         User user = getUser(email);

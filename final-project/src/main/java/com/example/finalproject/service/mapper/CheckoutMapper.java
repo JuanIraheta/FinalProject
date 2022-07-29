@@ -4,14 +4,11 @@ import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.persistence.model.CheckoutProduct;
 import com.example.finalproject.persistence.model.Product;
 import com.example.finalproject.web.DTO.CheckoutDTO;
-import com.example.finalproject.web.DTO.ProductCheckoutDTO;
+import com.example.finalproject.web.DTO.CheckoutProductDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 @Component
@@ -27,7 +24,7 @@ public interface CheckoutMapper {
     @Mapping(target = "name", source = "product.name")
     @Mapping(target = "price", source = "product.price")
     @Mapping(target = "quantity", source = "checkoutProduct.quantity")
-    ProductCheckoutDTO checkoutProductAndProductToProductCheckoutDTO (CheckoutProduct checkoutProduct, Product product);
+    CheckoutProductDTO checkoutProductAndProductToProductCheckoutDTO (CheckoutProduct checkoutProduct, Product product);
 
 }
 
