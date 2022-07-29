@@ -23,6 +23,20 @@ public class ObjectCreator {
                 .build();
     }
 
+    public User createUserNullElements ()
+    {
+        return User.builder()
+                .id(1L)
+                .email("test@test.com")
+                .userName("tester")
+                .firstName("Juan")
+                .lastName("Iraheta")
+                .phoneNumber("+503 71299 9991")
+                .address(new ArrayList<>())
+                .paymentMethods(new ArrayList<>())
+                .build();
+    }
+
     public UserDTO createUserDTO ()
     {
         return UserDTO.builder()
@@ -164,7 +178,7 @@ public class ObjectCreator {
         return Product.builder()
                 .id(1L)
                 .name("product")
-                .stock(1)
+                .stock(10)
                 .price(1.00)
                 .build();
     }
@@ -174,7 +188,7 @@ public class ObjectCreator {
         return ProductDTO.builder()
                 .id(1L)
                 .name("product")
-                .stock(1)
+                .stock(10)
                 .price(1.00)
                 .build();
     }
@@ -255,18 +269,19 @@ public class ObjectCreator {
                 .userName("tester")
                 .firstName("Juan")
                 .lastName("Iraheta")
-                .checkoutProducts(createProductCheckoutDTOList())
+                .checkoutProducts(createCheckoutProductDTOList())
                 .address(createCreateAddressDTO())
                 .paymentMethod(createPaymentMethodNoIdDTO())
                 .subTotal(1.00)
                 .build();
     }
 
-//    public CreateCheckoutDTO createCreateCheckoutDTO()
-//    {
-////        return CreateCheckoutDTO.builder()
-////                .products(createcheckoupro)
-//    }
+    public CreateCheckoutDTO createCreateCheckoutDTO()
+    {
+        return CreateCheckoutDTO.builder()
+                .products(createCreateCheckoutProductDTOList())
+                .build();
+    }
 
     //CHECKOUT PRODUCTS
     public List<CheckoutProduct> createCheckoutProductList ()
@@ -284,13 +299,28 @@ public class ObjectCreator {
                 .build();
     }
 
-    public List<CheckoutProductDTO> createProductCheckoutDTOList()
+    public List<CreateCheckoutProductDTO> createCreateCheckoutProductDTOList()
+    {
+        List<CreateCheckoutProductDTO> createCheckoutProductDTOList = new ArrayList<>();
+        createCheckoutProductDTOList.add(createCreateCheckoutProductDTO());
+        return createCheckoutProductDTOList;
+    }
+
+    public CreateCheckoutProductDTO createCreateCheckoutProductDTO ()
+    {
+        return CreateCheckoutProductDTO.builder()
+                .id(1L)
+                .quantity(1)
+                .build();
+    }
+
+    public List<CheckoutProductDTO> createCheckoutProductDTOList()
     {
         List<CheckoutProductDTO> checkoutProductDTOList = new ArrayList<>();
-        checkoutProductDTOList.add(createProductCheckoutDTO());
+        checkoutProductDTOList.add(createCheckoutProductDTO());
         return checkoutProductDTOList;
     }
-    public CheckoutProductDTO createProductCheckoutDTO()
+    public CheckoutProductDTO createCheckoutProductDTO()
     {
         return CheckoutProductDTO.builder()
                 .name("product")
