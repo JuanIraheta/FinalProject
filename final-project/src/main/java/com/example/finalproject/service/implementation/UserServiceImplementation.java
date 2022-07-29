@@ -15,9 +15,7 @@ import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -68,7 +66,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public List<CheckoutUserAddressDTO> getAllAddresses(String email)
+    public List<UserAddressDTO> getAllAddresses(String email)
     {
         //Get the specific user, its checkout and the product that is needed
         User user = foundUser(email);

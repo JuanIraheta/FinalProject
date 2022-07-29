@@ -9,7 +9,7 @@ public interface UserService {
 
     UserDTO getUser(String email);
 
-    List<CheckoutUserAddressDTO> getAllAddresses(String email);
+    List<UserAddressDTO> getAllAddresses(String email);
 
     void createAddress(String email, CreateAddressDTO createAddressDTO);
 

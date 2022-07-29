@@ -5,7 +5,6 @@ import com.example.finalproject.web.DTO.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/API/users/addresses")
-    public List<CheckoutUserAddressDTO> getAllUserAddresses(@AuthenticationPrincipal Jwt principal)
+    public List<UserAddressDTO> getAllUserAddresses(@AuthenticationPrincipal Jwt principal)
     {
         return userServiceImplementation.getAllAddresses(getEmailByPrincipal(principal));
     }

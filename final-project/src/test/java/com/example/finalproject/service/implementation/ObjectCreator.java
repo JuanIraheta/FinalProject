@@ -83,16 +83,16 @@ public class ObjectCreator {
                 .build();
     }
 
-    public List<CheckoutUserAddressDTO> createCheckoutUserAddressDTOList()
+    public List<UserAddressDTO> createCheckoutUserAddressDTOList()
     {
-        List<CheckoutUserAddressDTO> checkoutUserAddressDTOList = new ArrayList<>();
-        checkoutUserAddressDTOList.add(createCheckoutUserAddressDTO());
-        return checkoutUserAddressDTOList;
+        List<UserAddressDTO> userAddressDTOList = new ArrayList<>();
+        userAddressDTOList.add(createCheckoutUserAddressDTO());
+        return userAddressDTOList;
     }
 
-    public CheckoutUserAddressDTO createCheckoutUserAddressDTO()
+    public UserAddressDTO createCheckoutUserAddressDTO()
     {
-        return CheckoutUserAddressDTO.builder()
+        return UserAddressDTO.builder()
                 .id(1L)
                 .houseNumber("house")
                 .street("street")
@@ -262,6 +262,12 @@ public class ObjectCreator {
                 .build();
     }
 
+//    public CreateCheckoutDTO createCreateCheckoutDTO()
+//    {
+////        return CreateCheckoutDTO.builder()
+////                .products(createcheckoupro)
+//    }
+
     //CHECKOUT PRODUCTS
     public List<CheckoutProduct> createCheckoutProductList ()
     {
@@ -278,15 +284,15 @@ public class ObjectCreator {
                 .build();
     }
 
-    public List<ProductCheckoutDTO> createProductCheckoutDTOList()
+    public List<CheckoutProductDTO> createProductCheckoutDTOList()
     {
-        List<ProductCheckoutDTO> productCheckoutDTOList = new ArrayList<>();
-        productCheckoutDTOList.add(createProductCheckoutDTO());
-        return productCheckoutDTOList;
+        List<CheckoutProductDTO> checkoutProductDTOList = new ArrayList<>();
+        checkoutProductDTOList.add(createProductCheckoutDTO());
+        return checkoutProductDTOList;
     }
-    public ProductCheckoutDTO createProductCheckoutDTO()
+    public CheckoutProductDTO createProductCheckoutDTO()
     {
-        return ProductCheckoutDTO.builder()
+        return CheckoutProductDTO.builder()
                 .name("product")
                 .price(1.00)
                 .quantity(1)

@@ -144,15 +144,15 @@ class UserServiceImplementationTest {
             User user = objectCreator.createUser();
             List<Address> addressList = objectCreator.createAddressList();
 
-            List<CheckoutUserAddressDTO> checkoutUserAddressDTOList = objectCreator.createCheckoutUserAddressDTOList();
+            List<UserAddressDTO> userAddressDTOList = objectCreator.createCheckoutUserAddressDTOList();
 
             when(userRepository.findByEmail(anyString())).thenReturn(user);
             when(addressRepository.findAllByUser(user)).thenReturn(addressList);
 
-            List<CheckoutUserAddressDTO> getCheckoutUserAddressDtoList =
+            List<UserAddressDTO> getUserAddressDtoList =
                     userServiceImplementation.getAllAddresses("test@test.com");
 
-            assertThat(getCheckoutUserAddressDtoList.size(),is(checkoutUserAddressDTOList.size()));
+            assertThat(getUserAddressDtoList.size(),is(userAddressDTOList.size()));
 
             verify(userRepository).findByEmail(anyString());
             verify(addressRepository).findAllByUser(user);

@@ -5,6 +5,7 @@ import com.example.finalproject.persistence.model.Checkout;
 import com.example.finalproject.persistence.model.User;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.web.DTO.CheckoutDTO;
+import com.example.finalproject.web.DTO.CreateCheckoutDTO;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -86,8 +87,7 @@ class CheckoutServiceImplementationTest {
         @DisplayName("getCheckout When invalid email throw exception")
         void getCheckout_InValidUserEmail_ThrowException()
         {
-            User user = objectCreator.createUser();
-            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(userRepository.findByEmail(anyString())).thenReturn(null);
             assertThrows(ResourceNotFoundException.class,() ->
                     checkoutServiceImplementation.getCheckout("email@test.com"));
 
@@ -108,5 +108,18 @@ class CheckoutServiceImplementationTest {
             verify(checkoutRepository).findByUser(user);
         }
 
+    }
+
+    @Nested
+    @DisplayName("createCheckOut")
+    class createCheckOut {
+        @Test
+        @DisplayName("createCheckOut When valid createCheckoutDTO create a checkout")
+        void createCheckOut_ValidCreateCheckoutDTO_CreateCheckout()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+//            CreateCheckoutDTO createCheckoutDTO = objectCreator.createCreateCheckoutDTO();
+        }
     }
 }
