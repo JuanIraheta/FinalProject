@@ -514,6 +514,9 @@ class CheckoutServiceImplementationTest {
         doNothing().when(checkoutRepository).delete(checkout);
 
         checkoutServiceImplementation.deleteCheckout("test@test.com");
+
+        verify(userRepository).findByEmail(anyString());
+        verify(checkoutRepository).findByUser(user);
     }
 
     @Nested

@@ -2,7 +2,6 @@ package com.example.finalproject.persistence.repository;
 
 import com.example.finalproject.persistence.model.Address;
 import com.example.finalproject.persistence.model.User;
-import org.mapstruct.control.MappingControl;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -2,7 +2,6 @@ package com.example.finalproject.web.DTO;
 
 import lombok.*;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
 

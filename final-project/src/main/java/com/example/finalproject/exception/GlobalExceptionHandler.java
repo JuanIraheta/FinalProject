@@ -28,7 +28,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleRequiredInformationNullException(RequiredInformationNullException exception)
     {
         ErrorDetails errorDetails = new ErrorDetails(exception.getMessage(), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {NotEnoughStockException.class})

@@ -13,71 +13,81 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(value = "/api/users/checkouts")
 public class CheckoutController {
 
     private final CheckoutServiceImplementation checkoutServiceImplementation;
 
 
-    @GetMapping(value = "/API/users/checkouts")
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
     public CheckoutDTO getCheckout(@AuthenticationPrincipal Jwt principal)
     {
         return checkoutServiceImplementation.getCheckout(getEmailByPrincipal(principal));
     }
 
-    @PostMapping(value = "/API/users/checkouts")
+    @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> createCheckout (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreateCheckoutDTO checkoutDTO)
     {
         checkoutServiceImplementation.createCheckOut(getEmailByPrincipal(principal),checkoutDTO);
-        return new ResponseEntity<>("Checkout successfully created", HttpStatus.OK);
+        return new ResponseEntity<>("Checkout successfully created", HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/API/users/checkouts/products")
+    @PostMapping(value = "/products")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> addProductToCheckout (@AuthenticationPrincipal Jwt principal,@RequestBody @Valid CreateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.addProductToCheckout(getEmailByPrincipal(principal),checkoutProductDTO);
-        return new ResponseEntity<>("Product added successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Product added successfully", HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/API/users/checkouts/products/{id}")
+    @PutMapping(value = "/products/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> modifyCheckoutProductQuantity (@AuthenticationPrincipal Jwt principal,@PathVariable long id, @RequestBody @Valid UpdateCheckoutProductDTO checkoutProductDTO)
     {
         checkoutServiceImplementation.modifyCheckoutProductQuantity(getEmailByPrincipal(principal),id,checkoutProductDTO);
         return new ResponseEntity<>("Product quantity modified successfully", HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/API/users/checkouts/products/{id}")
+    @DeleteMapping(value = "/products/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> deleteCheckoutProduct(@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
         checkoutServiceImplementation.deleteCheckoutProduct(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Product Deleted Successfully",HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/API/users/checkouts")
+    @DeleteMapping()
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> deleteCheckout(@AuthenticationPrincipal Jwt principal)
     {
         checkoutServiceImplementation.deleteCheckout(getEmailByPrincipal(principal));
         return new ResponseEntity<>("Checkout Deleted Successfully",HttpStatus.OK);
     }
 
-    @PutMapping(value = "API/users/checkouts/addresses/{id}")
+    @PutMapping(value = "/addresses/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> changeCheckoutAddress (@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
         checkoutServiceImplementation.changeCheckoutAddress(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Address Changed Successfully", HttpStatus.OK);
     }
 
-    @PutMapping(value = "API/users/checkouts/payments/{id}")
+    @PutMapping(value = "/payments/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> changeCheckoutPaymentMethod (@AuthenticationPrincipal Jwt principal,@PathVariable long id)
     {
         checkoutServiceImplementation.changeCheckoutPaymentMethod(getEmailByPrincipal(principal),id);
         return new ResponseEntity<>("Payment Method Changed Successfully", HttpStatus.OK);
     }
 
-    @PostMapping(value = "/API/users/checkouts/purchases")
+    @PostMapping(value = "/purchases")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> generateOrder (@AuthenticationPrincipal Jwt principal)
     {
         checkoutServiceImplementation.generateOrder(getEmailByPrincipal(principal));
-        return new ResponseEntity<>("Order Successfully Generated", HttpStatus.OK);
+        return new ResponseEntity<>("Order Successfully Generated", HttpStatus.CREATED);
     }
 
     private String getEmailByPrincipal (Jwt principal)

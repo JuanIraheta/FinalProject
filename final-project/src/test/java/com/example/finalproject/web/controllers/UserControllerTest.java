@@ -146,7 +146,7 @@ class UserControllerTest {
         }
 
         @Test
-        @DisplayName("createAddress Valid CreateAddressDTO Return Is Created")
+        @DisplayName("createAddress Invalid Email Return Is Not Found")
         void createAddress_InvalidEmail_NotFoundResponse() throws Exception
         {
             CreateAddressDTO createAddressDTO = objectCreator.createCreateAddressDTO();
