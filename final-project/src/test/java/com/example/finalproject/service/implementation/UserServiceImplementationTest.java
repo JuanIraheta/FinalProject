@@ -145,7 +145,7 @@ class UserServiceImplementationTest {
             User user = objectCreator.createUser();
             List<Address> addressList = objectCreator.createAddressList();
 
-            List<UserAddressDTO> userAddressDTOList = objectCreator.createCheckoutUserAddressDTOList();
+            List<UserAddressDTO> userAddressDTOList = objectCreator.createUserAddressDTOList();
 
             when(userRepository.findByEmail(anyString())).thenReturn(user);
             when(addressRepository.findAllByUser(user)).thenReturn(addressList);

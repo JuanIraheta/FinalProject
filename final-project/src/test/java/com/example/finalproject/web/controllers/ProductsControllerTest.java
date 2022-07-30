@@ -128,7 +128,7 @@ class ProductsControllerTest {
 
         @Test
         @DisplayName("getProducts NoProducts Throw Exception")
-        void getProducts_NoProducts_OKResponse() throws Exception
+        void getProducts_NoProducts_IsNotFound() throws Exception
         {
             when(productServiceImplementation.getProduct(anyLong())).thenThrow(ResourceNotFoundException.class);
             mockMvc.perform(MockMvcRequestBuilders.get("/API/products/1"))
