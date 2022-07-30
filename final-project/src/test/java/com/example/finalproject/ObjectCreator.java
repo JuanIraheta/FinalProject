@@ -77,6 +77,7 @@ public class ObjectCreator {
         return createAddressDTOList;
     }
 
+
     public CreateAddressDTO createCreateAddressDTO()
     {
         return CreateAddressDTO.builder()
@@ -87,24 +88,14 @@ public class ObjectCreator {
                 .build();
     }
 
-    private CreateAddressDTO createAddressDTO()
-    {
-        return CreateAddressDTO.builder()
-                .houseNumber("house")
-                .street("street")
-                .city("city")
-                .state("state")
-                .build();
-    }
-
-    public List<UserAddressDTO> createCheckoutUserAddressDTOList()
+    public List<UserAddressDTO> createUserAddressDTOList()
     {
         List<UserAddressDTO> userAddressDTOList = new ArrayList<>();
-        userAddressDTOList.add(createCheckoutUserAddressDTO());
+        userAddressDTOList.add(createUserAddressDTO());
         return userAddressDTOList;
     }
 
-    public UserAddressDTO createCheckoutUserAddressDTO()
+    public UserAddressDTO createUserAddressDTO()
     {
         return UserAddressDTO.builder()
                 .id(1L)
@@ -213,8 +204,8 @@ public class ObjectCreator {
                 .id(1L)
                 .firstName("Juan")
                 .lastName("Iraheta")
-                .address(createAddressDTO())
-                .orderProducts(createListOrderProductDTO())
+                .address(createCreateAddressDTO())
+                .orderProducts(createOrderProductDTOList())
                 .paymentMethod(createPaymentMethodNoIdDTO())
                 .total(1.00)
                 .delivered(false)
@@ -234,7 +225,7 @@ public class ObjectCreator {
         return orderProducts;
     }
 
-    public List<OrderProductDTO> createListOrderProductDTO ()
+    public List<OrderProductDTO> createOrderProductDTOList()
     {
         List<OrderProductDTO> list = new ArrayList<>();
         OrderProductDTO orderProductDTO = createOrderProductDTO();

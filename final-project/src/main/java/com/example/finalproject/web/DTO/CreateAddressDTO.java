@@ -1,8 +1,6 @@
 package com.example.finalproject.web.DTO;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateAddressDTO {
 //Dto used for creating an address in the checkout
 
