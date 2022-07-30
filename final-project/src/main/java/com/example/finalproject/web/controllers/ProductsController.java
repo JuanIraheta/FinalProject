@@ -4,26 +4,24 @@ import com.example.finalproject.service.implementation.ProductServiceImplementat
 import com.example.finalproject.web.DTO.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(value = "/api/products")
 public class ProductsController {
 
     private final ProductServiceImplementation productServiceImplementation;
 
-    @GetMapping(value = "/API/products")
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<ProductDTO> getProducts()
     {
         return productServiceImplementation.getAllProducts();
     }
-    @GetMapping(value = "/API/products/{id}")
+    @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO getProduct(@PathVariable long id)
     {
