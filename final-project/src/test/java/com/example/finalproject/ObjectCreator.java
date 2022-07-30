@@ -281,6 +281,7 @@ public class ObjectCreator {
         return CreateCheckoutDTO.builder()
                 .products(createCreateCheckoutProductDTOList())
                 .build();
+
     }
 
     //CHECKOUT PRODUCTS
