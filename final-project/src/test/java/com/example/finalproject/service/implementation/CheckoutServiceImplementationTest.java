@@ -1,5 +1,6 @@
 package com.example.finalproject.service.implementation;
 
+import com.example.finalproject.ObjectCreator;
 import com.example.finalproject.exception.*;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
@@ -8,13 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
