@@ -263,6 +263,15 @@ public class ObjectCreator {
                 .build();
     }
 
+    public Checkout createCheckoutEmptyFields()
+    {
+        return Checkout.builder()
+                .id(1L)
+                .user(createUser())
+                .checkoutProducts(createCheckoutProductList())
+                .build();
+    }
+
     public CheckoutDTO createCheckoutDTO()
     {
         return CheckoutDTO.builder()
@@ -333,6 +342,16 @@ public class ObjectCreator {
     {
         return UpdateCheckoutProductDTO.builder()
                 .quantity(value)
+                .build();
+    }
+
+    //TRANSACTION
+    public Transaction createTransaction()
+    {
+        return Transaction.builder()
+                .id(1L)
+                .quantity(1.00)
+                .paymentMethod(createPaymentMethod())
                 .build();
     }
 }

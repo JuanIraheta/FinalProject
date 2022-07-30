@@ -1,8 +1,6 @@
 package com.example.finalproject.service.implementation;
 
-import com.example.finalproject.exception.NotEnoughStockException;
-import com.example.finalproject.exception.ResourceAlreadyExistException;
-import com.example.finalproject.exception.ResourceNotFoundException;
+import com.example.finalproject.exception.*;
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.persistence.repository.*;
 import com.example.finalproject.web.DTO.*;
@@ -602,6 +600,145 @@ class CheckoutServiceImplementationTest {
             verify(userRepository).findByEmail(anyString());
             verify(checkoutRepository).findByUser(any());
             verify(paymentMethodRepository).findByUserAndId(any(),anyLong());
+        }
+    }
+
+    @Nested
+    @DisplayName("generateOrder")
+    class GenerateOrder {
+        @Test
+        @DisplayName("generateOrder When valid Id Change Checkout Payment Method")
+        void generateOrder_ValidUser_GenerateOrder()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+
+            Orders order = objectCreator.createOrder();
+
+            Transaction transaction = objectCreator.createTransaction();
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(orderRepository.save(any())).thenReturn(order);
+            when(transactionRepository.save(any())).thenReturn(transaction);
+
+            checkoutServiceImplementation.generateOrder("test@test.com");
+
+            verify(userRepository,times(2)).findByEmail(anyString());
+            verify(checkoutRepository,times(2)).findByUser(any());
+            verify(orderRepository,times(2)).save(any());
+            verify(transactionRepository).save(any());
+        }
+
+        @Test
+        @DisplayName("generateOrder When empty address throw exception")
+        void generateOrder_EmptyAddress_GenerateOrder()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckoutEmptyFields();
+            checkout.setPaymentMethod(objectCreator.createPaymentMethod());
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+
+            assertThrows(RequiredInformationNullException.class,() ->
+                    checkoutServiceImplementation.generateOrder("test@test.com"));
+
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+
+        }
+
+        @Test
+        @DisplayName("generateOrder When empty payment method throw exception")
+        void generateOrder_EmptyPaymentMethod_GenerateOrder()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckoutEmptyFields();
+            checkout.setAddress(objectCreator.createAddress());
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+
+            assertThrows(RequiredInformationNullException.class,() ->
+                    checkoutServiceImplementation.generateOrder("test@test.com"));
+
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+
+        }
+
+        @Test
+        @DisplayName("generateOrder Not enough founds throw exception")
+        void generateOrder_NotEnoughFoundsInCheckout_ThrowException()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            checkout.getCheckoutProducts().get(0).getProduct().setPrice(150.00);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+
+            assertThrows(NotEnoughFoundsException.class,() ->
+                    checkoutServiceImplementation.generateOrder("test@test.com"));
+
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+
+        }
+
+        @Test
+        @DisplayName("generateOrder When not enough founds in order throw exception")
+        void generateOrder_NotEnoughFoundsInOrder_ThrowException()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+
+            Orders order = objectCreator.createOrder();
+
+            Transaction transaction = objectCreator.createTransaction();
+            transaction.setQuantity(150.00);
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(orderRepository.save(any())).thenReturn(order);
+            when(transactionRepository.save(any())).thenReturn(transaction);
+
+            assertThrows(NotEnoughFoundsException.class,() ->
+                    checkoutServiceImplementation.generateOrder("test@test.com"));
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+            verify(orderRepository).save(any());
+            verify(transactionRepository).save(any());
+        }
+
+        @Test
+        @DisplayName("generateOrder When not enough stock in order throw exception")
+        void generateOrder_NotEnoughStockInOrder_ThrowException()
+        {
+            User user = objectCreator.createUser();
+            Checkout checkout = objectCreator.createCheckout();
+            checkout.getCheckoutProducts().get(0).setQuantity(50);
+
+            Orders order = objectCreator.createOrder();
+
+
+
+            when(userRepository.findByEmail(anyString())).thenReturn(user);
+            when(checkoutRepository.findByUser(any())).thenReturn(checkout);
+            when(orderRepository.save(any())).thenReturn(order);
+
+
+            assertThrows(NotEnoughStockException.class,() ->
+                    checkoutServiceImplementation.generateOrder("test@test.com"));
+
+            verify(userRepository).findByEmail(anyString());
+            verify(checkoutRepository).findByUser(any());
+            verify(orderRepository).save(any());
         }
     }
 }
