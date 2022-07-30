@@ -18,12 +18,6 @@ public class UserController {
 
     private final UserServiceImplementation userServiceImplementation;
 
-//    @GetMapping(value = "/API/users")
-//    public List<UserDTO> getUsers()
-//    {
-//        return userServiceImplementation.getAllUsers();
-//    }
-
     @GetMapping(value = "/API/users")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO getUsers(@AuthenticationPrincipal Jwt principal)
@@ -31,16 +25,6 @@ public class UserController {
         return userServiceImplementation.getUser(getEmailByPrincipal(principal));
     }
 
-//    @GetMapping(value = "/test")
-//    public ResponseEntity<String> test (@AuthenticationPrincipal Jwt principal)
-//    {
-//        if (principal == null)
-//        {
-//            return new ResponseEntity<>("Authenticate", HttpStatus.UNAUTHORIZED);
-//        }
-//        String email = principal.getClaims().get("email").toString();
-//        return new ResponseEntity<>(email, HttpStatus.OK);
-//    }
 
     @GetMapping(value = "/API/users/addresses")
     @ResponseStatus(HttpStatus.OK)

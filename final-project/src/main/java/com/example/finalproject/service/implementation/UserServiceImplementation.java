@@ -25,13 +25,6 @@ public class UserServiceImplementation implements UserService {
     private final AddressRepository addressRepository;
     private final PaymentMethodRepository paymentMethodRepository;
 
-//    @Override
-//    public List<UserDTO> getAllUsers() {
-//
-//        List<User> users = userRepository.findAll();
-//        return UserMapper.INSTANCE.usersToUserDTOS(users);
-//    }
-
     @Override
     public UserDTO getUser(String userEmail) {
         User foundUser = foundUser(userEmail);

@@ -1,6 +1,5 @@
 package com.example.finalproject.web.DTO;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -16,9 +15,4 @@ public class UpdateCheckoutProductDTO {
     @NotNull(message = "Quantity is mandatory")
     private int quantity;
 
-
-//    @JsonCreator
-//    public UpdateCheckoutProductDTO(int quantity) {
-//        this.quantity = quantity;
-//    }
 }

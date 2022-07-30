@@ -1,6 +1,5 @@
 package com.example.finalproject.web.DTO;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.*;
 
 import javax.validation.Valid;
@@ -18,10 +17,5 @@ public class CreateCheckoutDTO {
     @NotEmpty(message = "Add at least one product")
     @Valid
     private List<CreateCheckoutProductDTO> products;
-
-//    @JsonCreator
-//    public CreateCheckoutDTO(List<CreateCheckoutProductDTO> products) {
-//        this.products = products;
-//    }
 
 }
