@@ -1,4 +1,4 @@
-package com.example.finalproject.service.implementation;
+package com.example.finalproject;
 
 import com.example.finalproject.persistence.model.*;
 import com.example.finalproject.web.DTO.*;
