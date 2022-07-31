@@ -208,7 +208,6 @@ public class ObjectCreator {
                 .orderProducts(createOrderProductDTOList())
                 .paymentMethod(createPaymentMethodNoIdDTO())
                 .total(1.00)
-                .delivered(false)
                 .build();
     }
 

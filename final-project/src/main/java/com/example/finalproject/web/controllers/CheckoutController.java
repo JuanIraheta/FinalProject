@@ -4,6 +4,7 @@ import com.example.finalproject.service.implementation.CheckoutServiceImplementa
 import com.example.finalproject.web.DTO.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,8 @@ public class CheckoutController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Obtained the checkout information of the current user",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CheckoutDTO.class))}),
             @ApiResponse(responseCode = "404",
                     description = "Could not find a checkout related to the current user",
                     content = @Content)

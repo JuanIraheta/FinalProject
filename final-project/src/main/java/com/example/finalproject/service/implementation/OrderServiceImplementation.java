@@ -25,6 +25,14 @@ public class OrderServiceImplementation implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+
+    /**
+     * This method will return a list with all the orders information that are related to the current authenticated user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return a List of OrderDTO with the information of each order related to the user
+     * @throws ResourceNotFoundException when there are no orders related to the user
+     * ,or when there is no user found with the email
+     */
     @Override
     public List<OrderDTO> getAllOrders(String email)
     {
@@ -53,6 +61,14 @@ public class OrderServiceImplementation implements OrderService {
         return orderDTOS;
     }
 
+    /**
+     * This method will return an OrderDTO with the information of an order related to the user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param id The id of the order to find
+     * @return an OrderDTO with all the information of the specific order found
+     * @throws ResourceNotFoundException when there is no order with that id related to the user, or
+     * when there is no user found with the email
+     */
     @Override
     public OrderDTO getOrder(String email, long id)
     {
@@ -73,6 +89,12 @@ public class OrderServiceImplementation implements OrderService {
         return orderDTO;
     }
 
+
+    /**
+     * This method will map all the order products of each order into the respective OrderProductDTO
+     * @param orderDTO The OrderDTO that needs the list of mapped OrderProductDTO
+     * @param order The order that will provide the list of unmapped OrderProducts
+     */
     //Method used to map the specific order products to an order product dto
     private void mappingOrderProducts (OrderDTO orderDTO, Orders order)
     {
@@ -88,6 +110,12 @@ public class OrderServiceImplementation implements OrderService {
     }
 
 
+    /**
+     * This method will return a User found on the database with the email specified
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return an User found in the database
+     * @throws ResourceNotFoundException when there is no user found with the email
+     */
     //get an specific user from the database
     private User getUser (String email) {
         User user = userRepository.findByEmail(email);

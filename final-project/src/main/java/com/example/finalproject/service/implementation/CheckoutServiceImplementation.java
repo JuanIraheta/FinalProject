@@ -31,6 +31,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
     private final TransactionRepository transactionRepository;
 
 
+    /**
+     * This method will return a CheckoutDTO with the information of the checkout related to the current user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return a CheckoutDTO with all the information of the checkout related to the user
+     * @throws ResourceNotFoundException when there is no checkout related to the user, or
+     * when there is no user found with the email
+     */
     @Override
     public CheckoutDTO getCheckout(String email) {
         //Get the specific user, its checkout and the product that is needed
@@ -56,6 +63,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return checkoutDTO;
     }
 
+    /**
+     * This method will create a checkout with a product or a list of products
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param checkoutDTO The DTO with the information necessary to create the checkout
+     * @throws ResourceNotFoundException when there is no user found with the email
+     * @throws ResourceAlreadyExistException when there is already a checkout in this user
+     */
     @Override
     public void createCheckOut(String email,CreateCheckoutDTO checkoutDTO)
     {
@@ -85,6 +99,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
     }
 
+    /**
+     * This method will add a product to a checkout, if checkout doesnt exist then will create a checkout with one
+     * product, if the product is already on the checkout will add quantity to the product in the checkout
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param checkoutProductDTO The DTO with the information of the product and the quantity
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no user found with the email
+     * @throws NotEnoughStockException when there is no enough stock in the product
+     */
     @Override
     public void addProductToCheckout(String email, CreateCheckoutProductDTO checkoutProductDTO)
     {
@@ -117,6 +139,15 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
 
+    /**
+     * This method add or remove quantity from a product in the checkout
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param productID The id of the product that we want to modify its quantity
+     * @param updateCheckoutProductDTO The DTO with the information necesary to modify the quantity of the product
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no product in this checkout with
+     * the id, or when there is no user found with the email
+     * @throws NotEnoughStockException when there is no enough stock in the product
+     */
     @Override
     public void modifyCheckoutProductQuantity(String email,long productID, UpdateCheckoutProductDTO updateCheckoutProductDTO)
     {
@@ -141,6 +172,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
 
+    /**
+     * This method delete a product in the checkout, when the checkout is deleted when has no products
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param productId The id of the product that we want to delete
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no product in this checkout with
+     * the id, or when there is no user found with the email
+     */
     @Override
     public void deleteCheckoutProduct(String email,long productId)
     {
@@ -167,6 +205,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
 
+    /**
+     * This method delete a the checkout related to the current authenticated user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no user found with the email
+     */
     @Override
     public void deleteCheckout(String email)
     {
@@ -179,6 +222,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutRepository.delete(checkout);
     }
 
+    /**
+     * This method changes the delivery address of the checkout with another related to the user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param id The id of the address related to the user that we want to set
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no address related to the user
+     * with the id, or when there is no user found with the email
+     */
     @Override
     public void changeCheckoutAddress (String email,long id)
     {
@@ -202,6 +252,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutRepository.save(checkout);
     }
 
+
+    /**
+     * This method changes the payment method of the checkout with another related to the user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param id The id of the payment method related to the user that we want to set
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no payment method related to
+     * the user with the id, or when there is no user found with the email
+     */
     @Override
     public void changeCheckoutPaymentMethod (String email,long id)
     {
@@ -226,6 +284,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
     }
 
 
+    /**
+     * This method generates an order based on the information of the checkout of the current user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @throws ResourceNotFoundException when there is no checkout, or when there is no user found with the email
+     * @throws NotEnoughStockException when there are not enough stock on a product to generate the order
+     * @throws NotEnoughFoundsException when there are not enough founds on the payment method to generate the order
+     * @throws RequiredInformationNullException when the address or payment method of the checkout are not specified
+     */
     @Override
     public void generateOrder(String email)
     {
@@ -247,7 +313,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         order.setTransaction(transaction);
 
         //Remove founds from payment method
-        setPaymentMethodFounds(order,transaction);
+        setPaymentMethodFounds(transaction);
 
         //Saving the order with all the elements and deleting the checkout
         orderRepository.save(order);
@@ -258,6 +324,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
 
 
     //Secondary Methods
+
+    /**
+     * This method sets the quantity of the checkout product and validates that there is enough stock
+     * @param checkoutProduct The specific product that is going to change its quantity
+     * @param quantity The quantity to be set on the chekout product
+     * @param stock The quantity of stock that is currently on the product
+     * @throws NotEnoughFoundsException when there is not enough stock of the product
+     */
     //Sets the products quantity on the checkout product
     private void setCheckoutProductQuantity(CheckoutProduct checkoutProduct, int quantity, int stock)
     {
@@ -270,6 +344,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.save(checkoutProduct);
     }
 
+    /**
+     * This method deletes the checkout product when its quantity is less or equals to zero
+     * @param checkoutProduct The specific product that is going to be deleted
+     */
     //Deletes the product of the checkout when the quantity reaches zero
     private void deleteCheckoutProductWhenQuantityZero(CheckoutProduct checkoutProduct)
     {
@@ -279,6 +357,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
     }
 
+    /**
+     * This method deletes the checkout product from the database and is removed from the list of its checkout
+     * @param checkoutProduct The specific product that is going to be deleted
+     */
     //Method used to delete a checkout product
     private void checkoutProductDeletion(CheckoutProduct checkoutProduct)
     {
@@ -286,6 +368,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.delete(checkoutProduct);
     }
 
+    /**
+     * This method deletes the checkout when it has no more products on it
+     * @param checkout The checkout that is going to be deleted
+     */
     //Deletes the checkout if it doesn't have any more products
     private void deleteCheckoutNoProducts(Checkout checkout)
     {
@@ -295,6 +381,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
     }
 
+    /**
+     * This method wraps the creation of the checkout product and validates that there is enough stock
+     * @param product The specific product that is going to be set on this checkout product
+     * @param quantity The quantity of the product that is going to be added to the checkout
+     * @param checkout The checkout that is going to be related to this product
+     * @throws NotEnoughFoundsException when there is not enough stock of the product
+     */
     //Method used to create a checkout product and validates that the quantity is less than stock of product
     private void createCheckoutProduct(Product product,int quantity, Checkout checkout)
     {
@@ -311,6 +404,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         checkoutProductRepository.save(checkoutProduct);
     }
 
+    /**
+     * This method calculates the subtotal of the current checkout related to the user
+     * @param checkout The specific checkout that is going to be used to calculate its subtotal
+     */
     //Calculates the subtotal of the current state of the checkout
     private double calculateCheckoutSubtotal(Checkout checkout)
     {
@@ -324,6 +421,14 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return subTotal;
     }
 
+    /**
+     * This method creates the order products related to an order, mapping the checkout products to a new order product,
+     * removes the quantity of stock from each product,
+     * calculates the total from the products and validates that there is enough stock
+     * @param checkout The checkout that provides the checkout products to be mapped
+     * @param order The generated order where the mapped products are going to be insert in
+     * @throws NotEnoughStockException when there is not enough stock of the product
+     */
     //Create the order products based on the checkout products, removes stock from products and returns total
     private double createOrderProductsCalculateTotal(Checkout checkout, Orders order)
     {
@@ -345,6 +450,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return total;
     }
 
+    /**
+     * This method will discount a specific quantity to a product
+     * @param orderProduct The specific order product that provides the product and the quantity to discount
+     * @throws NotEnoughStockException when there is not enough stock of the product
+     */
     //Removes stock from products after the order is generated
     private void discountStockFromProducts(OrderProduct orderProduct)
     {
@@ -358,6 +468,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         productRepository.save(orderProduct.getProduct());
     }
 
+    /**
+     * This method wraps the creation of the transaction based on the information of the order
+     * @param order The specific order that is going to provide the payment method and total of the purchase
+     */
     //Creates the transaction based on the order
     private Transaction generateTransaction (Orders order)
     {
@@ -369,6 +483,11 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return transactionRepository.save(transaction);
     }
 
+    /**
+     * This method create an order based on the checkout information
+     * @param checkout The specific checkout that provides the information to be mapped to create the order
+     * @throws NotEnoughFoundsException when there is not enough stock of the product
+     */
     //Creates an order based on the user checkout
     private Orders createOrderBasedOnCheckout (Checkout checkout)
     {
@@ -383,6 +502,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return orderRepository.save(createOrder);
     }
 
+
+    /**
+     * This method validates that the payment method and address from a checkout are specified
+     * @param checkout The specific checkout to be checked
+     * @throws RequiredInformationNullException when the address or payment method of the checkout are empty
+     */
     //Validates that the address and the payment are not null when generating the order
     private void mandatoryCheckoutElementsValidation(Checkout checkout)
     {
@@ -396,6 +521,10 @@ public class CheckoutServiceImplementation implements CheckoutService {
         }
     }
 
+    /**
+     * This method wraps the creation of the checkout based on an user
+     * @param user The specific user to be used to create a checkout with its information
+     */
     //Creates the checkout based on the user
     private Checkout createCheckoutBasedOnUser (User user)
     {
@@ -407,19 +536,30 @@ public class CheckoutServiceImplementation implements CheckoutService {
                 .build();
     }
 
+    /**
+     * This method removes the founds from a payment method when a transaction is generated
+     * @param transaction The transaction that will remove founds from the payment method
+     * @throws NotEnoughFoundsException when there are not enough founds on the payment method
+     */
     //Remove founds when generating the order, if there are not enough founds then throw exception
-    private void setPaymentMethodFounds(Orders order, Transaction transaction)
+    private void setPaymentMethodFounds(Transaction transaction)
     {
-        if (transaction.getQuantity() > order.getPaymentMethod().getFounds())
+        if (transaction.getQuantity() > transaction.getPaymentMethod().getFounds())
         {
             throw new NotEnoughFoundsException("Not enough founds on your payment method");
         }
-        order.getPaymentMethod().setFounds(order.getPaymentMethod().getFounds() - transaction.getQuantity());
-        paymentMethodRepository.save(order.getPaymentMethod());
+        transaction.getPaymentMethod().setFounds(transaction.getPaymentMethod().getFounds() - transaction.getQuantity());
+        paymentMethodRepository.save(transaction.getPaymentMethod());
     }
 
 
 
+    /**
+     * This method will return a User found on the database with the email specified
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return an User found in the database
+     * @throws ResourceNotFoundException when there is no user found with the email
+     */
     ////Validates the Objects we recieve
     private User getUser (String email)
     {
@@ -431,6 +571,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return user;
     }
 
+    /**
+     * This method will return a Product found on the database with the id specified
+     * @param id The id of the product
+     * @return a Product found in the database
+     * @throws ResourceNotFoundException when there is no product with that id
+     */
     private Product getProduct (long id)
     {
         Optional<Product> getProduct = productRepository.findById(id);
@@ -441,6 +587,12 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return getProduct.get();
     }
 
+    /**
+     * This method will return a checkout found with an user
+     * @param user The user that is related to the checkout to find
+     * @return a Checkout found in the database
+     * @throws ResourceNotFoundException when there is no checkout with that user
+     */
     private Checkout getCheckout (User user)
     {
         Checkout checkout = checkoutRepository.findByUser(user);
@@ -451,6 +603,13 @@ public class CheckoutServiceImplementation implements CheckoutService {
         return checkout;
     }
 
+    /**
+     * This method will return a Checkout Product found on the database with the checkout and the product
+     * @param checkout The checkout that containts the product
+     * @param product The specified on the checkout
+     * @return a CheckoutProduct found in the database
+     * @throws ResourceNotFoundException when there is no CheckoutProduct with that information
+     */
     private CheckoutProduct getCheckoutProduct(Checkout checkout, Product product)
     {
         CheckoutProduct checkoutProduct = checkoutProductRepository.findByCheckoutAndProduct(checkout,product);

@@ -4,6 +4,7 @@ import com.example.finalproject.service.implementation.ProductServiceImplementat
 import com.example.finalproject.web.DTO.ProductDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class ProductsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Obtained all the products and their information",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductDTO.class))}),
             @ApiResponse(responseCode = "404",
                     description = "There are no products available in this store",
                     content = @Content)
@@ -39,7 +41,8 @@ public class ProductsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Obtained the product information based on its id",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductDTO.class))}),
             @ApiResponse(responseCode = "404",
                     description = "There is no product available with this id",
                     content = @Content)

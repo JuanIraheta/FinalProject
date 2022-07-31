@@ -1,9 +1,11 @@
 package com.example.finalproject.web.controllers;
 
+import com.example.finalproject.persistence.model.PaymentMethod;
 import com.example.finalproject.service.implementation.UserServiceImplementation;
 import com.example.finalproject.web.DTO.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,7 +30,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Obtained the information of the current user",
-            content = {@Content(mediaType = "application/json")}),
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserDTO.class))}),
             @ApiResponse(responseCode = "404",
             description = "User information not found",
             content = @Content)
@@ -45,7 +48,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Obtained all the addresses related to the user",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserAddressDTO.class))}),
             @ApiResponse(responseCode = "404",
                     description = "There are no addresses related to this user",
                     content = @Content)
@@ -78,7 +82,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Obtained all the payment methods related to the user",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaymentMethodDTO.class))}),
             @ApiResponse(responseCode = "404",
                     description = "There are no payment methods related to this user",
                     content = @Content)
