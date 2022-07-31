@@ -69,7 +69,7 @@ class OrderControllerTest {
 
             when(orderServiceImplementation.getAllOrders(anyString())).thenReturn(orderDTOList);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/orders"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/orders"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$[0].firstName").value("Juan"))
                     .andExpect(status().isOk());
@@ -84,7 +84,7 @@ class OrderControllerTest {
 
             when(orderServiceImplementation.getAllOrders(anyString())).thenThrow(ResourceNotFoundException.class);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/orders"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/orders"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -103,7 +103,7 @@ class OrderControllerTest {
 
             when(orderServiceImplementation.getOrder(anyString(),anyLong())).thenReturn(orderDTO);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/orders/1"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/orders/1"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Juan"))
                     .andExpect(status().isOk());
@@ -118,7 +118,7 @@ class OrderControllerTest {
 
             when(orderServiceImplementation.getOrder(anyString(),anyLong())).thenThrow(ResourceNotFoundException.class);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/orders/1"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/orders/1"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 

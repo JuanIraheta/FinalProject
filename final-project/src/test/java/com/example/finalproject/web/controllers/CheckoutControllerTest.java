@@ -65,7 +65,7 @@ class CheckoutControllerTest {
 
             when(checkoutServiceImplementation.getCheckout(anyString())).thenReturn(checkoutDTO);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/checkouts"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/checkouts"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Juan"))
                     .andExpect(status().isOk());
@@ -80,7 +80,7 @@ class CheckoutControllerTest {
 
             when(checkoutServiceImplementation.getCheckout(anyString())).thenThrow(ResourceNotFoundException.class);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/checkouts"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/checkouts"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -98,7 +98,7 @@ class CheckoutControllerTest {
             CreateCheckoutDTO createCheckoutDTO = objectCreator.createCreateCheckoutDTO();
             doNothing().when(checkoutServiceImplementation).createCheckOut(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts")
                             .content(new ObjectMapper().writeValueAsString(createCheckoutDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -115,7 +115,7 @@ class CheckoutControllerTest {
             CreateCheckoutDTO createCheckoutDTO = objectCreator.createCreateCheckoutDTO();
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).createCheckOut(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts")
                             .content(new ObjectMapper().writeValueAsString(createCheckoutDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -131,7 +131,7 @@ class CheckoutControllerTest {
             CreateCheckoutDTO createCheckoutDTO = objectCreator.createCreateCheckoutDTO();
             doThrow(ResourceAlreadyExistException.class).when(checkoutServiceImplementation).createCheckOut(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts")
                             .content(new ObjectMapper().writeValueAsString(createCheckoutDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -146,7 +146,7 @@ class CheckoutControllerTest {
         {
             CreateCheckoutDTO createCheckoutDTO = new CreateCheckoutDTO();
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts")
                             .content(new ObjectMapper().writeValueAsString(createCheckoutDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -164,7 +164,7 @@ class CheckoutControllerTest {
             CheckoutProductDTO checkoutProductDTO = objectCreator.createCheckoutProductDTO();
             doNothing().when(checkoutServiceImplementation).addProductToCheckout(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/products")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/products")
                             .content(new ObjectMapper().writeValueAsString(checkoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -180,7 +180,7 @@ class CheckoutControllerTest {
             CheckoutProductDTO checkoutProductDTO = objectCreator.createCheckoutProductDTO();
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).addProductToCheckout(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/products")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/products")
                             .content(new ObjectMapper().writeValueAsString(checkoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -196,7 +196,7 @@ class CheckoutControllerTest {
             CheckoutProductDTO checkoutProductDTO = objectCreator.createCheckoutProductDTO();
             doThrow(NotEnoughStockException.class).when(checkoutServiceImplementation).addProductToCheckout(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/products")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/products")
                             .content(new ObjectMapper().writeValueAsString(checkoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -211,7 +211,7 @@ class CheckoutControllerTest {
         {
             CheckoutProductDTO checkoutProductDTO = new CheckoutProductDTO();
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts")
                             .content(new ObjectMapper().writeValueAsString(checkoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -229,7 +229,7 @@ class CheckoutControllerTest {
             UpdateCheckoutProductDTO updateCheckoutProductDTO = objectCreator.createUpdateCheckoutProductDTO(1);
             doNothing().when(checkoutServiceImplementation).modifyCheckoutProductQuantity(anyString(),anyLong(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/products/1")
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/products/1")
                             .content(new ObjectMapper().writeValueAsString(updateCheckoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -245,7 +245,7 @@ class CheckoutControllerTest {
         {
             UpdateCheckoutProductDTO updateCheckoutProductDTO = objectCreator.createUpdateCheckoutProductDTO(1);
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).modifyCheckoutProductQuantity(anyString(),anyLong(),any());
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/products/1")
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/products/1")
                             .content(new ObjectMapper().writeValueAsString(updateCheckoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -261,7 +261,7 @@ class CheckoutControllerTest {
             CheckoutProductDTO checkoutProductDTO = objectCreator.createCheckoutProductDTO();
             doThrow(NotEnoughStockException.class).when(checkoutServiceImplementation).modifyCheckoutProductQuantity(anyString(),anyLong(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/products/1")
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/products/1")
                             .content(new ObjectMapper().writeValueAsString(checkoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -276,7 +276,7 @@ class CheckoutControllerTest {
         {
             CheckoutProductDTO checkoutProductDTO = null;
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/products/1")
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/products/1")
                             .content(new ObjectMapper().writeValueAsString(checkoutProductDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -293,7 +293,7 @@ class CheckoutControllerTest {
         {
             doNothing().when(checkoutServiceImplementation).deleteCheckoutProduct(anyString(),anyLong());
 
-            mockMvc.perform(MockMvcRequestBuilders.delete("/API/users/checkouts/products/1"))
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/checkouts/products/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string("Product Deleted Successfully"));
@@ -307,7 +307,7 @@ class CheckoutControllerTest {
         {
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).deleteCheckoutProduct(anyString(),anyLong());
 
-            mockMvc.perform(MockMvcRequestBuilders.delete("/API/users/checkouts/products/1"))
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/checkouts/products/1"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -324,7 +324,7 @@ class CheckoutControllerTest {
         {
             doNothing().when(checkoutServiceImplementation).deleteCheckout(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.delete("/API/users/checkouts"))
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/checkouts"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string("Checkout Deleted Successfully"));
@@ -338,7 +338,7 @@ class CheckoutControllerTest {
         {
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).deleteCheckout(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.delete("/API/users/checkouts"))
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/checkouts"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -355,7 +355,7 @@ class CheckoutControllerTest {
         {
             doNothing().when(checkoutServiceImplementation).changeCheckoutAddress(anyString(),anyLong());
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/addresses/1"))
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/addresses/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string("Address Changed Successfully"));
@@ -368,7 +368,7 @@ class CheckoutControllerTest {
         {
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).changeCheckoutAddress(anyString(),anyLong());
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/addresses/1"))
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/addresses/1"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -385,7 +385,7 @@ class CheckoutControllerTest {
         {
             doNothing().when(checkoutServiceImplementation).changeCheckoutPaymentMethod(anyString(),anyLong());
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/payments/1"))
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/payments/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().string("Payment Method Changed Successfully"));
@@ -398,7 +398,7 @@ class CheckoutControllerTest {
         {
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).changeCheckoutPaymentMethod(anyString(),anyLong());
 
-            mockMvc.perform(MockMvcRequestBuilders.put("/API/users/checkouts/payments/1"))
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/users/checkouts/payments/1"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -415,7 +415,7 @@ class CheckoutControllerTest {
         {
             doNothing().when(checkoutServiceImplementation).generateOrder(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/purchases"))
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/purchases"))
                     .andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().string("Order Successfully Generated"));
@@ -429,7 +429,7 @@ class CheckoutControllerTest {
         {
             doThrow(ResourceNotFoundException.class).when(checkoutServiceImplementation).generateOrder(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/purchases"))
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/purchases"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -442,7 +442,7 @@ class CheckoutControllerTest {
         {
             doThrow(RequiredInformationNullException.class).when(checkoutServiceImplementation).generateOrder(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/purchases"))
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/purchases"))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
 
@@ -455,7 +455,7 @@ class CheckoutControllerTest {
         {
             doThrow(NotEnoughStockException.class).when(checkoutServiceImplementation).generateOrder(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/purchases"))
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/purchases"))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
 
@@ -468,7 +468,7 @@ class CheckoutControllerTest {
         {
             doThrow(NotEnoughFoundsException.class).when(checkoutServiceImplementation).generateOrder(anyString());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/checkouts/purchases"))
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/checkouts/purchases"))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
 
