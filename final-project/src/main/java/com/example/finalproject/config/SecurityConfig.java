@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .antMatchers("/h2-console/**").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/API/**").fullyAuthenticated()
+                .antMatchers("/api/**").fullyAuthenticated()
                 .and()
                 .oauth2ResourceServer().jwt();
 
