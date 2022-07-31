@@ -75,7 +75,7 @@ class CheckoutControllerTest {
 
         @Test
         @DisplayName("getCheckout InValid Email Throw Exception")
-        void getCheckout_InValidId_IsNotFound() throws Exception
+        void getCheckout_InValidEmail_IsNotFound() throws Exception
         {
 
             when(checkoutServiceImplementation.getCheckout(anyString())).thenThrow(ResourceNotFoundException.class);

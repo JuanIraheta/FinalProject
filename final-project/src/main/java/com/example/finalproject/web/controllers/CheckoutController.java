@@ -2,6 +2,10 @@ package com.example.finalproject.web.controllers;
 
 import com.example.finalproject.service.implementation.CheckoutServiceImplementation;
 import com.example.finalproject.web.DTO.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,15 @@ public class CheckoutController {
     private final CheckoutServiceImplementation checkoutServiceImplementation;
 
 
+    @Operation(summary = "Used to get the checkout that is related to the current authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Obtained the checkout information of the current user",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Could not find a checkout related to the current user",
+                    content = @Content)
+    })
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public CheckoutDTO getCheckout(@AuthenticationPrincipal Jwt principal)
