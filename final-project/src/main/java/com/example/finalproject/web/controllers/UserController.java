@@ -61,7 +61,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
                     description = "Create an address for this user",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = @Content),
             @ApiResponse(responseCode = "404",
                     description = "Can't create an address for this authenticated user, information not found",
                     content = @Content)
@@ -94,7 +94,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
                     description = "Create a payment method for this user",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = @Content),
             @ApiResponse(responseCode = "404",
                     description = "Can't create a payment method for this authenticated user, information not found",
                     content = @Content)
