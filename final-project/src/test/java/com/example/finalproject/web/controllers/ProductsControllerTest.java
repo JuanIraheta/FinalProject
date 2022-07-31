@@ -84,7 +84,7 @@ class ProductsControllerTest {
 
             when(productServiceImplementation.getProduct(anyLong())).thenReturn(productDTO);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/products/1"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/products/1"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("product"))
@@ -100,7 +100,7 @@ class ProductsControllerTest {
         void getProduct_Invalid_IsNotFound() throws Exception
         {
             when(productServiceImplementation.getProduct(anyLong())).thenThrow(ResourceNotFoundException.class);
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/products/1"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/products/1"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
         }
@@ -118,7 +118,7 @@ class ProductsControllerTest {
 
             when(productServiceImplementation.getAllProducts()).thenReturn(productDTOList);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/products"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/products"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("product"))
                     .andExpect(status().isOk());
@@ -131,7 +131,7 @@ class ProductsControllerTest {
         void getProducts_NoProducts_IsNotFound() throws Exception
         {
             when(productServiceImplementation.getProduct(anyLong())).thenThrow(ResourceNotFoundException.class);
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/products/1"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/products/1"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
         }

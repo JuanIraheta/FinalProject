@@ -17,7 +17,7 @@ public class ObjectCreator {
                 .userName("tester")
                 .firstName("Juan")
                 .lastName("Iraheta")
-                .phoneNumber("+503 71299 9991")
+                .phoneNumber("+503 7129 9991")
                 .address(createAddressList())
                 .paymentMethods(createPaymentMethodList())
                 .build();
@@ -238,6 +238,15 @@ public class ObjectCreator {
         return OrderProductDTO.builder()
                 .name("product")
                 .price(1.00)
+                .quantity(1)
+                .build();
+    }
+
+    public OrderProduct createOrderProduct()
+    {
+        return OrderProduct.builder()
+                .id(1L)
+                .product(createProduct())
                 .quantity(1)
                 .build();
     }

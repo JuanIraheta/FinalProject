@@ -67,7 +67,7 @@ class UserControllerTest {
 
             when(userServiceImplementation.getUser(anyString())).thenReturn(userDTO);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Juan"))
                     .andExpect(status().isOk());
@@ -82,7 +82,7 @@ class UserControllerTest {
 
             when(userServiceImplementation.getUser(anyString())).thenThrow(ResourceNotFoundException.class);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -102,7 +102,7 @@ class UserControllerTest {
 
             when(userServiceImplementation.getAllAddresses(anyString())).thenReturn(userAddressDTOList);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/addresses"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/addresses"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$[0].houseNumber").value("house"))
                     .andExpect(status().isOk());
@@ -117,7 +117,7 @@ class UserControllerTest {
 
             when(userServiceImplementation.getAllAddresses(anyString())).thenThrow(ResourceNotFoundException.class);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/addresses"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/addresses"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
 
@@ -136,7 +136,7 @@ class UserControllerTest {
             CreateAddressDTO createAddressDTO = objectCreator.createCreateAddressDTO();
             doNothing().when(userServiceImplementation).createAddress(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/addresses")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/addresses")
                             .content(new ObjectMapper().writeValueAsString(createAddressDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -152,7 +152,7 @@ class UserControllerTest {
             CreateAddressDTO createAddressDTO = objectCreator.createCreateAddressDTO();
             doThrow(ResourceNotFoundException.class).when(userServiceImplementation).createAddress(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/addresses")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/addresses")
                             .content(new ObjectMapper().writeValueAsString(createAddressDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -174,7 +174,7 @@ class UserControllerTest {
 
             when(userServiceImplementation.getAllPaymentMethods(anyString())).thenReturn(paymentMethodDTOList);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/payments"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/payments"))
                     .andDo(print())
                     .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("name"))
                     .andExpect(MockMvcResultMatchers.jsonPath("$[0].paymentType").value("type"))
@@ -189,7 +189,7 @@ class UserControllerTest {
         {
             when(userServiceImplementation.getAllPaymentMethods(anyString())).thenThrow(ResourceNotFoundException.class);
 
-            mockMvc.perform(MockMvcRequestBuilders.get("/API/users/payments"))
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/users/payments"))
                     .andDo(print())
                     .andExpect(status().isNotFound());
             verify(userServiceImplementation).getAllPaymentMethods(anyString());
@@ -207,7 +207,7 @@ class UserControllerTest {
             CreatePaymentMethodDTO createPaymentMethodDTO = objectCreator.createCreatePaymentMethodDTO();
             doNothing().when(userServiceImplementation).createPaymentMethod(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/payments")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/payments")
                             .content(new ObjectMapper().writeValueAsString(createPaymentMethodDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
@@ -223,7 +223,7 @@ class UserControllerTest {
             CreatePaymentMethodDTO createPaymentMethodDTO = objectCreator.createCreatePaymentMethodDTO();
             doThrow(ResourceNotFoundException.class).when(userServiceImplementation).createPaymentMethod(anyString(),any());
 
-            mockMvc.perform(MockMvcRequestBuilders.post("/API/users/payments")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/payments")
                             .content(new ObjectMapper().writeValueAsString(createPaymentMethodDTO))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print())
