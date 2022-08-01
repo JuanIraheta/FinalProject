@@ -26,5 +26,4 @@ public class OrderDTO {
 
     private double total;
 
-    private boolean delivered;
 }

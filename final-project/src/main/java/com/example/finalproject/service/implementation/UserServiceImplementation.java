@@ -25,12 +25,25 @@ public class UserServiceImplementation implements UserService {
     private final AddressRepository addressRepository;
     private final PaymentMethodRepository paymentMethodRepository;
 
+    /**
+     * This method will return an existing product of the store based on its id
+     * @param userEmail The email of the current authenticated user, used to get the user information
+     * @return a UserDTO with the current user information on the database
+     * @throws ResourceNotFoundException when there is no user found with the email
+     */
     @Override
     public UserDTO getUser(String userEmail) {
         User foundUser = foundUser(userEmail);
         return UserMapper.INSTANCE.userToUserDTO(foundUser);
     }
 
+    /**
+     * This method will return a List of PaymentMethodDTO with the information of all the payment methods of the user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return a List of PaymentMethodDTO with the information of each payment method
+     * @throws ResourceNotFoundException when there is no payment method found related to the user, or no user found with
+     * the email
+     */
     @Override
     public List<PaymentMethodDTO> getAllPaymentMethods(String email)
     {
@@ -46,6 +59,12 @@ public class UserServiceImplementation implements UserService {
         return PaymentMethodMapper.INSTANCE.paymentMethodToPaymentMethodDTO(getPaymentMethods);
     }
 
+    /**
+     * This method will create a payment method related to the current authenticated user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param createPaymentMethodDTO the DTO with the information to create the payment method
+     * @throws ResourceNotFoundException when there is no user found with the email
+     */
     @Override
     public void createPaymentMethod(String email, CreatePaymentMethodDTO createPaymentMethodDTO)
     {
@@ -58,6 +77,13 @@ public class UserServiceImplementation implements UserService {
         paymentMethodRepository.save(createPaymentMethod);
     }
 
+    /**
+     * This method will return a List of UserAddressDTO with the information of all the addresses of the user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return a List of UserAddressDTO with the information of each address
+     * @throws ResourceNotFoundException when there are no addresses related to this user, or
+     * when there is no user found with the email
+     */
     @Override
     public List<UserAddressDTO> getAllAddresses(String email)
     {
@@ -73,6 +99,12 @@ public class UserServiceImplementation implements UserService {
         return AddressMapper.INSTANCE.addressToCheckoutUserAddressDTO(getAddresses);
     }
 
+    /**
+     * This method will create an address related to the current authenticated user
+     * @param email The email of the current authenticated user, used to get the user information
+     * @param createAddressDTO The DTO with the information to create an address related to the user
+     * @throws ResourceNotFoundException when there is no user found with the email
+     */
     @Override
     public void createAddress(String email, CreateAddressDTO createAddressDTO)
     {
@@ -85,12 +117,19 @@ public class UserServiceImplementation implements UserService {
         addressRepository.save(createAddress);
     }
 
+
+    /**
+     * This method will return a User found on the database with the email specified
+     * @param email The email of the current authenticated user, used to get the user information
+     * @return an User found in the database
+     * @throws ResourceNotFoundException when there is no user found with the email
+     */
     private User foundUser (String email)
     {
         User user = userRepository.findByEmail(email);
         if (user == null)
         {
-            throw new ResourceNotFoundException("We could not find a user with the given id");
+            throw new ResourceNotFoundException("We could not find a user with the given email");
         }
         return user;
     }

@@ -45,6 +45,5 @@ public class Orders {
     @NotNull
     private double total;
 
-    private boolean delivered;
 
 }
