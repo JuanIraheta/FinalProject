@@ -582,7 +582,7 @@ public class CheckoutServiceImplementation implements CheckoutService {
         Optional<Product> getProduct = productRepository.findById(id);
         if (!getProduct.isPresent())
         {
-            throw new ResourceNotFoundException("We could not find a product with the given name");
+            throw new ResourceNotFoundException("We could not find a product with the given id");
         }
         return getProduct.get();
     }
