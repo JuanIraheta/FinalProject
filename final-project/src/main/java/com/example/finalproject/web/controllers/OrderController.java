@@ -2,7 +2,6 @@ package com.example.finalproject.web.controllers;
 
 import com.example.finalproject.service.implementation.OrderServiceImplementation;
 import com.example.finalproject.web.DTO.OrderDTO;
-import com.example.finalproject.web.DTO.ProductDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

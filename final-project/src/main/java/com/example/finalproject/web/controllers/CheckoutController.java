@@ -20,10 +20,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/users/checkouts")
 public class CheckoutController {
-
     private final CheckoutServiceImplementation checkoutServiceImplementation;
-
-
     @Operation(summary = "Used to get the checkout that is related to the current authenticated user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
